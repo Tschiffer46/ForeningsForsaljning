@@ -32,19 +32,60 @@ Think of it like a restaurant kitchen - it does all the work behind the scenes!
 
 ## Step 2: Navigate to the Project Folder
 
-Copy and paste this command into your terminal and press Enter:
+**⚠️ IMPORTANT:** The project folder location depends on where YOU downloaded/saved it!
+
+### Find Your Project First
+
+**On Mac:**
+1. Open **Finder**
+2. Look in: Downloads, Documents, or Desktop
+3. Find the folder named **ForeningsForsaljning**
+
+**On Windows:**
+1. Open **File Explorer**
+2. Look in: Downloads, Documents, or Desktop
+3. Find the folder named **ForeningsForsaljning**
+
+### Navigate to the Project
+
+**On Mac, use one of these (depending on where you found it):**
 
 ```bash
-cd /home/runner/work/ForeningsForsaljning/ForeningsForsaljning
+# If in Downloads:
+cd ~/Downloads/ForeningsForsaljning
+
+# If in Documents:
+cd ~/Documents/ForeningsForsaljning
+
+# If on Desktop:
+cd ~/Desktop/ForeningsForsaljning
 ```
 
-**What this does:** Changes your location to the project folder (like opening a folder on your computer).
+**On Windows:**
+
+```bash
+# If in Downloads:
+cd C:\Users\YourUsername\Downloads\ForeningsForsaljning
+
+# If in Documents:
+cd C:\Users\YourUsername\Documents\ForeningsForsaljning
+
+# If on Desktop:
+cd C:\Users\YourUsername\Desktop\ForeningsForsaljning
+```
+
+**💡 Tip:** In Mac Terminal, you can drag the folder from Finder into Terminal to automatically type the path!
 
 **Check you're in the right place:**
 ```bash
-pwd
+# Mac/Linux:
+ls
+
+# Windows:
+dir
 ```
-You should see: `/home/runner/work/ForeningsForsaljning/ForeningsForsaljning`
+
+You should see folders like: `backend`, `frontend`, and files like `package.json`, `README.md`
 
 ---
 

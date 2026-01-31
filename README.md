@@ -4,11 +4,16 @@ A comprehensive web application for managing sales teams, customers, orders, and
 
 ## 🚀 Quick Start for Beginners
 
-**New to this project?** Start here:
+**New to this project?** Choose your guide:
 
-1. **[QUICK-START.md](QUICK-START.md)** - Get up and running in 5 minutes
-2. **[BEGINNER-GUIDE.md](BEGINNER-GUIDE.md)** - Step-by-step guide for testing the backend
-3. **[BACKEND-TESTING.md](BACKEND-TESTING.md)** - Complete API testing guide
+### For Mac Users 🍎
+- **[MAC-SETUP.md](MAC-SETUP.md)** - Complete Mac-specific guide (START HERE!)
+
+### For All Users
+1. **[HOW-TO-TEST.md](HOW-TO-TEST.md)** - How to start the server and test it
+2. **[QUICK-START.md](QUICK-START.md)** - Command reference
+3. **[BEGINNER-GUIDE.md](BEGINNER-GUIDE.md)** - Detailed walkthrough
+4. **[BACKEND-TESTING.md](BACKEND-TESTING.md)** - Complete API testing guide
 
 **Already familiar?** Jump to [Installation](#installation) below.
 

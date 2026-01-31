@@ -1,11 +1,39 @@
 # Quick Start Cheat Sheet
 
+## 🚨 FIRST: Find Your Project Location
+
+**The paths shown below are EXAMPLES.** You need to navigate to wherever YOU saved the project!
+
+**For Mac users:** See [MAC-SETUP.md](MAC-SETUP.md) for detailed instructions.
+
+**Common locations:**
+- `~/Downloads/ForeningsForsaljning`
+- `~/Documents/ForeningsForsaljning`
+- `~/Desktop/ForeningsForsaljning`
+
+**To find it:**
+- Look in your Downloads, Documents, or Desktop folder
+- Or drag the folder into Terminal to get the full path
+
 ## ⚡ Super Quick Start (Copy & Paste These)
 
-### 1️⃣ Open Terminal and Run These 3 Commands:
+### 1️⃣ Open Terminal and Navigate to Project:
+
+**Replace the path below with YOUR actual path!**
 
 ```bash
-cd /home/runner/work/ForeningsForsaljning/ForeningsForsaljning
+# Example for Downloads folder:
+cd ~/Downloads/ForeningsForsaljning
+
+# Or Documents:
+cd ~/Documents/ForeningsForsaljning
+
+# Or Desktop:
+cd ~/Desktop/ForeningsForsaljning
+```
+
+Then run:
+```bash
 npm install
 node backend/server.js
 ```
@@ -23,10 +51,13 @@ http://localhost:3001/api/health
 
 ## 🧪 Quick Tests (Copy & Paste)
 
-Open **a second terminal** and run:
+Open **a second terminal** and navigate to the project first:
 
 ```bash
-cd /home/runner/work/ForeningsForsaljning/ForeningsForsaljning
+# Navigate to project (use YOUR path!)
+cd ~/Downloads/ForeningsForsaljning
+
+# Run tests
 ./test-backend.sh
 ```
 
