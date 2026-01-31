@@ -4,6 +4,10 @@ A comprehensive web application for managing sales teams, customers, orders, and
 
 ## 🚀 FIRST TIME? READ THIS! 
 
+### ❓ JUST WANT TO TEST IT?
+
+**→ Read [SIMPLE-TEST.md](SIMPLE-TEST.md)** ← **3 simple tests, copy-paste commands!**
+
 ### ⚠️ DOWNLOADED ZIP BUT ONLY GOT ONE README FILE?
 
 **→ Read [DOWNLOAD-INSTRUCTIONS.md](DOWNLOAD-INSTRUCTIONS.md)** - You need to download from the correct branch!
