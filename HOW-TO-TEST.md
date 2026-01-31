@@ -1,5 +1,7 @@
 # 🎯 How to Test the Backend - Visual Guide
 
+> **⚠️ IMPORTANT:** If you see "Not Found" in your browser, it means **the backend server is not running**. Follow the 3 commands below to start it first!
+
 ## The Simplest Way (Copy These 3 Commands)
 
 Open your terminal and copy-paste these **3 commands** one at a time:
@@ -135,12 +137,33 @@ fetch('http://localhost:3001/api/super-admin/clubs', {
 
 ## Troubleshooting
 
+### ❌ Browser Shows "Not Found" or "Cannot GET /api/health"
+
+**This is the most common issue!** The backend server is not running.
+
+**Fix:**
+1. **Open a terminal** (Command Prompt, Terminal, etc.)
+2. **Run these commands:**
+   ```bash
+   cd /home/runner/work/ForeningsForsaljning/ForeningsForsaljning
+   node backend/server.js
+   ```
+3. **Wait for the success message:**
+   ```
+   Multi-tenant server running on port 3001
+   ```
+4. **KEEP THIS TERMINAL WINDOW OPEN** - don't close it!
+5. **NOW** try the browser again: `http://localhost:3001/api/health`
+
+**Remember:** The backend must be running in a terminal for the browser to work!
+
 ### ❌ "Cannot find module 'express'"
 
 **Fix:** You didn't install dependencies. Run:
 ```bash
 npm install
 ```
+Then try starting the server again.
 
 ### ❌ "Port 3001 is already in use"
 
@@ -148,7 +171,7 @@ npm install
 - Check for other terminal windows
 - Or restart your computer
 
-### ❌ "Connection refused"
+### ❌ "Connection refused" or "ERR_CONNECTION_REFUSED"
 
 **Fix:** The backend isn't running. Make sure you:
 1. Ran `node backend/server.js`
