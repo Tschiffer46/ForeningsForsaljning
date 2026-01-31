@@ -6,8 +6,9 @@ A comprehensive web application for managing sales teams, customers, orders, and
 
 **New to this project?** Choose your guide:
 
-### For Mac Users 🍎
-- **[MAC-SETUP.md](MAC-SETUP.md)** - Complete Mac-specific guide (START HERE!)
+### 🍎 Mac Users - START HERE!
+- **[FOR-MAC-USERS.md](FOR-MAC-USERS.md)** ← **Ultra-simple guide** (if you got "folder not found" error)
+- **[MAC-SETUP.md](MAC-SETUP.md)** ← Detailed Mac guide with troubleshooting
 
 ### For All Users
 1. **[HOW-TO-TEST.md](HOW-TO-TEST.md)** - How to start the server and test it
