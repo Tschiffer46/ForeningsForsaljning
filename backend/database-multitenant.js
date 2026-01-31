@@ -179,7 +179,29 @@ function initializeDatabase() {
       FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE CASCADE
     )`);
 
-    console.log('Multi-tenant database initialized successfully');
+    // Create indexes for performance optimization
+    // Critical for scale: 10s of clubs, 100s of teams, 100k-2M customers
+    db.run(`CREATE INDEX IF NOT EXISTS idx_teams_club_id ON teams(club_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_admin_users_club_id ON admin_users(club_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_geographical_areas_club_id ON geographical_areas(club_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_geographical_areas_team_id ON geographical_areas(team_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_customers_club_id ON customers(club_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_customers_area_id ON customers(area_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_customers_customer_number ON customers(club_id, customer_number)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_products_club_id ON products(club_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_products_active ON products(club_id, active)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_orders_club_id ON orders(club_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_orders_customer_id ON orders(customer_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_orders_quarter_year ON orders(club_id, quarter, year)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_orders_delivered ON orders(club_id, delivered)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_payments_order_id ON payments(order_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_payments_paid ON payments(paid)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_club_billing_club_id ON club_billing(club_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_club_billing_status ON club_billing(club_id, status)`);
+
+    console.log('Multi-tenant database initialized successfully with performance indexes');
   });
 }
 

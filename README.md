@@ -109,9 +109,10 @@ A comprehensive web application for managing sales teams, customers, orders, and
 
 ### Backend
 - **Node.js** with Express
-- **SQLite** database
+- **SQLite** database (optimized for scale: 10s of clubs, 100k-2M customers)
 - **RESTful API** architecture
 - **CORS** enabled for frontend integration
+- **Performance indexes** on all foreign keys and query filters
 
 ### Frontend
 - **React** with React Router
@@ -120,15 +121,60 @@ A comprehensive web application for managing sales teams, customers, orders, and
 - **React-Leaflet** for map components
 - **Responsive design** for desktop and mobile browsers
 
+### Scalability & Performance
+
+**Current Architecture Supports:**
+- 10-50 clubs (tenant organizations)
+- 5-20 teams per club (~500-1,000 teams total)
+- 200-2,000 customers per team (100,000 - 2,000,000 customers total)
+- Quarterly orders (potentially millions of order records)
+
+**Performance Optimizations:**
+- Database indexes on all foreign keys and filters
+- Club-scoped queries for data isolation and performance
+- Pagination support for large datasets
+- Query optimization with proper WHERE clauses
+- Efficient JOIN operations
+
+**When to Migrate to PostgreSQL/MySQL:**
+- Beyond 50 active clubs
+- More than 5 million customers
+- High concurrent write operations (>100/sec)
+- Need for advanced features (replication, clustering)
+- Geographic distribution requirements
+
 ## Database Schema
 
-- `teams` - Sales teams with shared login credentials
+### Multi-Tenant Architecture
+
+The application uses a **multi-tenant SaaS architecture** where multiple clubs (organizations) share the same application instance but have completely isolated data.
+
+**Tenant Isolation:**
+- Every table includes `club_id` for data scoping
+- All queries filtered by club context
+- Clubs cannot access each other's data
+- Geographic territories assigned per club
+
+**Three-Tier User System:**
+1. **Super Admin** - Platform administrators who manage clubs
+2. **Club Admin** - Club administrators who manage their organization
+3. **Team Users** - Sales teams who enter orders and deliveries
+
+### Core Tables
+
+**Multi-Tenant Tables:**
+- `clubs` - Tenant organizations with branding, billing, geographic area
+- `super_admins` - Platform administrators
+- `club_billing` - Subscription and billing tracking
+
+**Club-Scoped Tables:**
+- `admin_users` - Club administrators (linked to club)
+- `teams` - Sales teams with shared login credentials (linked to club)
 - `team_members` - Individual team member info (display only)
-- `admin_users` - Individual admin accounts
-- `geographical_areas` - Territory polygons and address lists
-- `customers` - Customer registry
-- `products` - Product catalog with pricing
-- `orders` - Order records with quarterly tracking and delivery status
+- `geographical_areas` - Territory polygons and address lists (linked to club)
+- `customers` - Customer registry (linked to club)
+- `products` - Product catalog with pricing (linked to club)
+- `orders` - Order records with quarterly tracking and delivery status (linked to club)
 - `order_items` - Individual products per order
 - `payments` - Payment tracking and status
 
