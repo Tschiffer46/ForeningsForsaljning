@@ -2,19 +2,28 @@
 
 A comprehensive web application for managing sales teams, customers, orders, and delivery of paper products across defined geographical areas. Built as a multi-tenant SaaS platform supporting multiple clubs with complete data isolation.
 
-## 🚀 Quick Start for Beginners
+## 🚀 FIRST TIME? READ THIS! 
 
-**New to this project?** Choose your guide:
+### 📖 You're Looking at This on GitHub.com?
 
-### 🍎 Mac Users - START HERE!
-- **[FOR-MAC-USERS.md](FOR-MAC-USERS.md)** ← **Ultra-simple guide** (if you got "folder not found" error)
+**→ Read [START-HERE.md](START-HERE.md) FIRST** - It explains how to download this code to your computer!
+
+### 💻 You Already Have the Code on Your Computer?
+
+**Choose your guide based on your situation:**
+
+#### 🍎 Mac Users
+- **[FOR-MAC-USERS.md](FOR-MAC-USERS.md)** ← **Ultra-simple 6-step guide**
 - **[MAC-SETUP.md](MAC-SETUP.md)** ← Detailed Mac guide with troubleshooting
 
-### For All Users
-1. **[HOW-TO-TEST.md](HOW-TO-TEST.md)** - How to start the server and test it
-2. **[QUICK-START.md](QUICK-START.md)** - Command reference
-3. **[BEGINNER-GUIDE.md](BEGINNER-GUIDE.md)** - Detailed walkthrough
-4. **[BACKEND-TESTING.md](BACKEND-TESTING.md)** - Complete API testing guide
+#### 🪟 Windows/Linux Users  
+- **[BEGINNER-GUIDE.md](BEGINNER-GUIDE.md)** ← Complete walkthrough for all platforms
+- **[HOW-TO-TEST.md](HOW-TO-TEST.md)** ← How to start server and test
+
+#### 📚 Quick References
+- **[QUICK-START.md](QUICK-START.md)** ← Command cheat sheet
+- **[BACKEND-TESTING.md](BACKEND-TESTING.md)** ← Complete API testing guide
+- **[ISSUE-RESOLVED.md](ISSUE-RESOLVED.md)** ← Common path issues explained
 
 **Already familiar?** Jump to [Installation](#installation) below.
 
