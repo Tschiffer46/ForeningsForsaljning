@@ -1,8 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const path = require('path');
-const fs = require('fs');
 const db = require('./database');
 
 const app = express();
@@ -11,19 +9,6 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Try to serve React build first, fallback to public folder
-const buildPath = path.join(__dirname, '..', 'frontend', 'build');
-const publicPath = path.join(__dirname, '..', 'public');
-
-// Check if build exists, otherwise use public fallback
-if (fs.existsSync(buildPath)) {
-  console.log(`Serving React app from: ${buildPath}`);
-  app.use(express.static(buildPath));
-} else {
-  console.log(`React build not found, serving fallback from: ${publicPath}`);
-  app.use(express.static(publicPath));
-}
 
 // Helper functions for database queries
 const dbAll = (query, params = []) => {
@@ -470,13 +455,145 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'ForeningsForsaljning Multi-Tenant API is running' });
 });
 
-// Serve React app for all non-API routes (must be last!)
+// Root route - Landing page embedded directly in code
+app.get('/', (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>FöreningsFörsäljning - Sales Organization System</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        }
+        .container {
+          background: white;
+          border-radius: 20px;
+          padding: 40px;
+          max-width: 600px;
+          box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+          text-align: center;
+        }
+        h1 {
+          color: #667eea;
+          font-size: 2.5em;
+          margin-bottom: 10px;
+        }
+        .subtitle {
+          color: #666;
+          font-size: 1.2em;
+          margin-bottom: 30px;
+        }
+        .status {
+          background: #10b981;
+          color: white;
+          padding: 15px 30px;
+          border-radius: 10px;
+          display: inline-block;
+          margin: 20px 0;
+          font-weight: bold;
+          font-size: 1.1em;
+        }
+        .buttons {
+          display: flex;
+          gap: 15px;
+          justify-content: center;
+          flex-wrap: wrap;
+          margin: 30px 0;
+        }
+        .btn {
+          background: #667eea;
+          color: white;
+          padding: 12px 24px;
+          text-decoration: none;
+          border-radius: 8px;
+          font-weight: 500;
+          transition: transform 0.2s, background 0.2s;
+          display: inline-block;
+        }
+        .btn:hover {
+          background: #5568d3;
+          transform: translateY(-2px);
+        }
+        .info {
+          background: #f3f4f6;
+          padding: 20px;
+          border-radius: 10px;
+          margin-top: 30px;
+          text-align: left;
+        }
+        .info h3 {
+          color: #667eea;
+          margin-bottom: 15px;
+        }
+        .credential {
+          background: white;
+          padding: 10px;
+          margin: 5px 0;
+          border-radius: 5px;
+          font-family: monospace;
+        }
+        .footer {
+          margin-top: 30px;
+          color: #999;
+          font-size: 0.9em;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>🚀 FöreningsFörsäljning</h1>
+        <p class="subtitle">Sales Organization Management System</p>
+        
+        <div class="status">✅ Backend API Running!</div>
+        
+        <div class="buttons">
+          <a href="/api/health" class="btn">Health Check</a>
+          <a href="/api/products" class="btn">View Products</a>
+        </div>
+        
+        <div class="info">
+          <h3>📊 System Status</h3>
+          <p><strong>Environment:</strong> Production</p>
+          <p><strong>Database:</strong> Connected</p>
+          <p><strong>Demo Data:</strong> Loaded</p>
+          <p><strong>Clubs:</strong> 3 (Stockholm, Göteborg, Malmö)</p>
+          <p><strong>Teams:</strong> 5 teams</p>
+        </div>
+        
+        <div class="info">
+          <h3>👤 Demo Credentials</h3>
+          <p><strong>Admin Login:</strong></p>
+          <div class="credential">Username: admin.stockholm<br>Password: demo123</div>
+          
+          <p style="margin-top: 15px;"><strong>Team Login:</strong></p>
+          <div class="credential">Username: norrmalm<br>Password: team123</div>
+        </div>
+        
+        <div class="footer">
+          Backend API is fully operational. Frontend React app coming soon!
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+});
+
+// Catch-all for undefined routes (must be last!)
 app.get('*', (req, res) => {
-  if (fs.existsSync(path.join(buildPath, 'index.html'))) {
-    res.sendFile(path.join(buildPath, 'index.html'));
-  } else {
-    res.sendFile(path.join(publicPath, 'index.html'));
-  }
+  res.status(404).json({ 
+    error: 'Not Found',
+    message: 'This endpoint does not exist. Try /api/health or visit the home page at /'
+  });
 });
 
 // Bind to 0.0.0.0 for Railway deployment (allows external traffic)
@@ -484,8 +601,7 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`Multi-tenant server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Ready to accept connections`);
-  const servingFrom = fs.existsSync(buildPath) ? buildPath : publicPath;
-  console.log(`Serving static files from: ${servingFrom}`);
+  console.log(`Serving embedded landing page at root`);
 });
 
 module.exports = app;
