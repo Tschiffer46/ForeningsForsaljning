@@ -3,12 +3,18 @@
   "version": "1.0.0",
   "description": "Sales organization app for managing teams, customers, orders, and delivery",
   "main": "backend/server.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "start": "node backend/server.js",
     "dev": "node backend/server.js",
     "frontend": "cd frontend && npm start",
-    "build": "cd frontend && npm install && npm run build",
-    "postinstall": "cd frontend && npm install",
+    "install-frontend": "cd frontend && npm install --legacy-peer-deps",
+    "build-frontend": "cd frontend && npm run build --legacy-peer-deps",
+    "build": "npm run install-frontend && npm run build-frontend",
+    "railway-build": "npm run install-frontend && npm run build-frontend",
     "test": "echo \"No tests specified\" && exit 0"
   },
   "keywords": ["sales", "teams", "orders", "delivery"],
