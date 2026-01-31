@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 const db = require('./database');
 
 const app = express();
@@ -9,6 +10,10 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Serve static files from React build in production
+const buildPath = path.join(__dirname, '..', 'frontend', 'build');
+app.use(express.static(buildPath));
 
 // Helper functions for database queries
 const dbAll = (query, params = []) => {
@@ -455,11 +460,17 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'ForeningsForsaljning Multi-Tenant API is running' });
 });
 
+// Serve React app for all non-API routes (must be last!)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(buildPath, 'index.html'));
+});
+
 // Bind to 0.0.0.0 for Railway deployment (allows external traffic)
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Multi-tenant server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Ready to accept connections`);
+  console.log(`Serving static files from: ${buildPath}`);
 });
 
 module.exports = app;
