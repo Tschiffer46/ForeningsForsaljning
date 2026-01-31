@@ -178,11 +178,7 @@ function AdminDashboard() {
   const [quarter, setQuarter] = useState('Q1');
   const [year, setYear] = useState(new Date().getFullYear());
 
-  useEffect(() => {
-    loadStats();
-  }, [quarter, year]);
-
-  const loadStats = async () => {
+  const loadStats = React.useCallback(async () => {
     try {
       const [teamStats, palletStats] = await Promise.all([
         axios.get(`${API_URL}/api/admin/orders-by-team?quarter=${quarter}&year=${year}`),
@@ -192,7 +188,11 @@ function AdminDashboard() {
     } catch (err) {
       console.error('Error loading stats:', err);
     }
-  };
+  }, [quarter, year]);
+
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
 
   return (
     <div className="dashboard">
@@ -311,15 +311,7 @@ function CustomerOrderForm() {
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  useEffect(() => {
-    calculateTotal();
-  }, [cart, products]);
-
-  const loadProducts = async () => {
+  const loadProducts = React.useCallback(async () => {
     try {
       const response = await axios.get(`${API_URL}/api/products`);
       setProducts(response.data);
@@ -327,9 +319,9 @@ function CustomerOrderForm() {
       console.error('Error loading products:', err);
       alert('Unable to load products. Please try again.');
     }
-  };
+  }, []);
 
-  const calculateTotal = () => {
+  const calculateTotal = React.useCallback(() => {
     const sum = cart.reduce((acc, item) => {
       const product = products.find(p => p.id === item.product_id);
       if (!product) return acc;
@@ -337,7 +329,15 @@ function CustomerOrderForm() {
       return acc + (price * item.quantity);
     }, 0);
     setTotal(sum);
-  };
+  }, [cart, products]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
+
+  useEffect(() => {
+    calculateTotal();
+  }, [calculateTotal]);
 
   const addToCart = (productId, quantity, isSubscription) => {
     const existingIndex = cart.findIndex(item => 
