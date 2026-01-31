@@ -4,7 +4,13 @@ A comprehensive web application for managing sales teams, customers, orders, and
 
 ## 🚀 FIRST TIME? READ THIS! 
 
-### ❓ JUST WANT TO TEST IT?
+### ☁️ WANT TO DEPLOY TO CLOUD INSTEAD?
+
+**→ Read [CLOUD-DEPLOY.md](CLOUD-DEPLOY.md)** ← **Deploy to Railway.app in 5 minutes - FREE to test!**
+
+**Why cloud?** No setup needed, just click buttons. Access from anywhere. Share with team!
+
+### ❓ WANT TO TEST IT LOCALLY?
 
 **→ Read [SIMPLE-TEST.md](SIMPLE-TEST.md)** ← **3 simple tests, copy-paste commands!**
 
