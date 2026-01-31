@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
 const db = require('./database');
 
 const app = express();
@@ -11,9 +12,18 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files from React build in production
+// Try to serve React build first, fallback to public folder
 const buildPath = path.join(__dirname, '..', 'frontend', 'build');
-app.use(express.static(buildPath));
+const publicPath = path.join(__dirname, '..', 'public');
+
+// Check if build exists, otherwise use public fallback
+if (fs.existsSync(buildPath)) {
+  console.log(`Serving React app from: ${buildPath}`);
+  app.use(express.static(buildPath));
+} else {
+  console.log(`React build not found, serving fallback from: ${publicPath}`);
+  app.use(express.static(publicPath));
+}
 
 // Helper functions for database queries
 const dbAll = (query, params = []) => {
@@ -462,7 +472,11 @@ app.get('/api/health', (req, res) => {
 
 // Serve React app for all non-API routes (must be last!)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(buildPath, 'index.html'));
+  if (fs.existsSync(path.join(buildPath, 'index.html'))) {
+    res.sendFile(path.join(buildPath, 'index.html'));
+  } else {
+    res.sendFile(path.join(publicPath, 'index.html'));
+  }
 });
 
 // Bind to 0.0.0.0 for Railway deployment (allows external traffic)
@@ -470,7 +484,8 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`Multi-tenant server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Ready to accept connections`);
-  console.log(`Serving static files from: ${buildPath}`);
+  const servingFrom = fs.existsSync(buildPath) ? buildPath : publicPath;
+  console.log(`Serving static files from: ${servingFrom}`);
 });
 
 module.exports = app;
