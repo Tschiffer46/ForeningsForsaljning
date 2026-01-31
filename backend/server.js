@@ -455,8 +455,75 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'ForeningsForsaljning Multi-Tenant API is running' });
 });
 
+// ===== TEST & DIAGNOSTIC ENDPOINTS =====
+// Simple test endpoint
+app.get('/test', (req, res) => {
+  console.log('TEST endpoint hit');
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Server Test</title>
+      <style>
+        body { 
+          margin: 0; 
+          padding: 40px; 
+          font-family: Arial, sans-serif; 
+          background: linear-gradient(135deg, #00b894, #00cec9);
+          color: white;
+          text-align: center;
+        }
+        h1 { font-size: 48px; margin: 20px 0; }
+        p { font-size: 24px; }
+      </style>
+    </head>
+    <body>
+      <h1>✅ Server Works!</h1>
+      <p>Backend is running correctly</p>
+      <p>Time: ${new Date().toISOString()}</p>
+    </body>
+    </html>
+  `);
+});
+
+// Diagnostic endpoint
+app.get('/diagnostic', (req, res) => {
+  console.log('DIAGNOSTIC endpoint hit');
+  
+  const diagnostic = {
+    status: 'Server is running',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    nodeVersion: process.version,
+    port: PORT,
+    routes: {
+      '/': 'Landing page (embedded HTML)',
+      '/test': 'Simple test page',
+      '/diagnostic': 'This diagnostic page',
+      '/api/health': 'Health check',
+      '/api/products': 'Products list',
+      '/api/auth/login': 'Login endpoint',
+      '/api/*': 'Other API endpoints'
+    },
+    requestInfo: {
+      method: req.method,
+      url: req.url,
+      headers: req.headers,
+      ip: req.ip
+    },
+    serverInfo: {
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      platform: process.platform
+    }
+  };
+  
+  res.json(diagnostic);
+});
+
 // Root route - Landing page embedded directly in code
 app.get('/', (req, res) => {
+  console.log('ROOT endpoint hit - serving landing page');
   res.send(`
     <!DOCTYPE html>
     <html lang="en">
