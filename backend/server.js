@@ -246,7 +246,7 @@ app.get('/api/customers', requireAuth, async (req, res) => {
   }
 });
 
-app.post('/api/customers', requireAuth, async (req, res) => {
+app.post('/api/customers', async (req, res) => {
   try {
     const { customer_number, name, address, postal_address, phone_number, email, area_id } = req.body;
     const result = await dbRun(
@@ -301,7 +301,7 @@ app.delete('/api/customers/:id', requireAuth, async (req, res) => {
 });
 
 // ===== PRODUCT ROUTES =====
-app.get('/api/products', requireAuth, async (req, res) => {
+app.get('/api/products', async (req, res) => {
   try {
     const products = await dbAll('SELECT * FROM products WHERE active = 1 ORDER BY name');
     res.json(products);
@@ -363,7 +363,7 @@ app.get('/api/orders', requireAuth, async (req, res) => {
   }
 });
 
-app.post('/api/orders', requireAuth, async (req, res) => {
+app.post('/api/orders', async (req, res) => {
   try {
     const { customer_id, quarter, year, items } = req.body;
     
@@ -404,7 +404,7 @@ app.post('/api/orders', requireAuth, async (req, res) => {
   }
 });
 
-app.get('/api/orders/:id', requireAuth, async (req, res) => {
+app.get('/api/orders/:id', async (req, res) => {
   try {
     const order = await dbGet(`
       SELECT o.*, c.name as customer_name, c.address, c.customer_number,
