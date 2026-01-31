@@ -1,6 +1,16 @@
-# FöreningsFörsäljning - Sales Organization System
+# FöreningsFörsäljning - Multi-Tenant Sales Organization Platform
 
-A comprehensive web application for managing sales teams, customers, orders, and delivery of paper products across defined geographical areas in Sweden.
+A comprehensive web application for managing sales teams, customers, orders, and delivery of paper products across defined geographical areas. Built as a multi-tenant SaaS platform supporting multiple clubs with complete data isolation.
+
+## 🚀 Quick Start for Beginners
+
+**New to this project?** Start here:
+
+1. **[QUICK-START.md](QUICK-START.md)** - Get up and running in 5 minutes
+2. **[BEGINNER-GUIDE.md](BEGINNER-GUIDE.md)** - Step-by-step guide for testing the backend
+3. **[BACKEND-TESTING.md](BACKEND-TESTING.md)** - Complete API testing guide
+
+**Already familiar?** Jump to [Installation](#installation) below.
 
 ## Features
 
@@ -181,69 +191,105 @@ The application uses a **multi-tenant SaaS architecture** where multiple clubs (
 ## Installation
 
 ### Prerequisites
-- Node.js 14+ installed
-- npm package manager
+- **Node.js 14+** installed ([Download here](https://nodejs.org))
+- **npm** package manager (comes with Node.js)
+- **Terminal/Command Line** access
 
-### Setup
+### Quick Setup (3 Steps)
 
-1. **Clone the repository**
+**Step 1: Navigate to the project**
 ```bash
-git clone https://github.com/Tschiffer46/ForeningsForsaljning.git
-cd ForeningsForsaljning
+cd /home/runner/work/ForeningsForsaljning/ForeningsForsaljning
 ```
 
-2. **Install backend dependencies**
+**Step 2: Install dependencies**
 ```bash
 npm install
 ```
 
-3. **Install frontend dependencies**
+**Step 3: Start the backend**
+```bash
+node backend/server.js
+```
+
+**That's it!** Backend is running on `http://localhost:3001`
+
+**Test it:** Open browser and go to `http://localhost:3001/api/health`
+
+### Detailed Setup Instructions
+
+For beginners or if you need more help, see **[BEGINNER-GUIDE.md](BEGINNER-GUIDE.md)**
+
+### Running the Frontend
+
+(Frontend implementation in progress - coming soon!)
+
 ```bash
 cd frontend
 npm install
-cd ..
+npm start
 ```
+
+Frontend will run on `http://localhost:3000`
 
 ## Running the Application
 
 ### Development Mode
 
-1. **Start the backend server** (Terminal 1)
+**Terminal 1 - Backend Server:**
 ```bash
+node backend/server.js
+```
+Backend runs on `http://localhost:3001`
+
+**Terminal 2 - Frontend (when ready):**
+```bash
+cd frontend
 npm start
 ```
-Backend runs on http://localhost:3001
+Frontend runs on `http://localhost:3000`
 
-2. **Start the frontend** (Terminal 2)
+### Testing the Backend
+
+See **[BACKEND-TESTING.md](BACKEND-TESTING.md)** for complete testing guide.
+
+**Quick test:**
 ```bash
-npm run frontend
+# Run automated tests
+./test-backend.sh
 ```
-Frontend runs on http://localhost:3000
 
-3. **Access the application**
-- Open browser to http://localhost:3000
-- Customer order page: http://localhost:3000/customer-order
+### Demo Login Credentials
 
-### Default Login Credentials
+**Super Admin (Platform Manager):**
+- Username: `superadmin`
+- Password: `superadmin123`
+- Access: All clubs
 
-**Admin Account:**
-- Username: `admin`
-- Password: `admin123`
+**Club Admin Examples:**
+- Stockholm: `admin.stockholm` / `demo123`
+- Göteborg: `admin.goteborg` / `demo123`
+- Malmö: `admin.malmo` / `demo123`
 
-**Team Accounts:**
-- Teams must be created by admin first
-- Each team gets custom username/password
+**Team Examples:**
+- Any team: password `team123`
+- Usernames: `norrmalm`, `sodermalm`, `centrum`, `hisingen`, `vastra`
+
+See **[STATUS-DEMO.md](STATUS-DEMO.md)** for complete demo account list.
 
 ## API Endpoints
 
 ### Authentication
-- `POST /api/auth/login` - Login (team or admin)
+- `POST /api/auth/login` - Login (super_admin, admin, or team)
 
-### Teams
-- `GET /api/teams` - List all teams
+### Super Admin Endpoints
+- `GET /api/super-admin/clubs` - List all clubs
+- `POST /api/super-admin/clubs` - Create new club
+- `POST /api/super-admin/club-admins` - Create club administrator
+
+### Club Admin & Team Endpoints (require x-club-id header)
+- `GET /api/teams` - List teams for club
 - `POST /api/teams` - Create team (admin only)
-- `GET /api/teams/:id` - Get team details
-- `PUT /api/teams/:id` - Update team (admin only)
 - `DELETE /api/teams/:id` - Delete team (admin only)
 
 ### Geographic Areas
