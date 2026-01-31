@@ -455,8 +455,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'ForeningsForsaljning Multi-Tenant API is running' });
 });
 
-app.listen(PORT, () => {
+// Bind to 0.0.0.0 for Railway deployment (allows external traffic)
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Multi-tenant server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Ready to accept connections`);
 });
 
 module.exports = app;
