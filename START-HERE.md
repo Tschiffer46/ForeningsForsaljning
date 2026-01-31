@@ -25,28 +25,43 @@ To actually use this application, you need to:
 
 ## Method 1: Download ZIP (Easiest for Beginners) ⬇️
 
-**Step 1:** On the GitHub repository page (where you are now), find the green **"Code"** button (top right area)
+### ⚠️ IMPORTANT: Select the Correct Branch First!
 
-**Step 2:** Click it, then click **"Download ZIP"**
+All the code is on branch `copilot/create-sales-rep-organization-app`. You MUST switch to this branch before downloading!
 
-**Step 3:** Your browser will download a file called something like `ForeningsForsaljning-main.zip` or `ForeningsForsaljning-copilot-create-sales-rep-organization-app.zip`
+**Step 1:** Find the branch dropdown near the top-left (shows "main" or current branch)
 
-**Step 4:** Go to your **Downloads** folder and double-click the ZIP file to extract it
+**Step 2:** Click it and select **`copilot/create-sales-rep-organization-app`**
 
-**Step 5:** You now have a folder called `ForeningsForsaljning` (or similar) - this contains all the code!
+**Step 3:** Wait for page to refresh - you should now see MANY files (not just README.md)
 
-**Step 6:** Move this folder somewhere convenient (Desktop, Documents, etc.)
+**Step 4:** NOW click the green **"Code"** button (top right area)
+
+**Step 5:** Click **"Download ZIP"**
+
+**Step 6:** Your browser will download a file called `ForeningsForsaljning-copilot-create-sales-rep-organization-app.zip`
+
+**Step 7:** Go to your **Downloads** folder and double-click the ZIP file to extract it
+
+**Step 8:** You now have a folder called `ForeningsForsaljning-copilot-create-sales-rep-organization-app` - this contains all the code!
+
+**Step 9:** Rename it to just `ForeningsForsaljning` if you want (optional)
+
+**Step 10:** Move this folder somewhere convenient (Desktop, Documents, etc.)
+
+### If You Only Got README.md:
+You downloaded from the wrong branch! See **[DOWNLOAD-INSTRUCTIONS.md](DOWNLOAD-INSTRUCTIONS.md)** for detailed help.
 
 ---
 
 ## Method 2: Git Clone (For Developers) 💻
 
-If you have Git installed:
+If you have Git installed, clone directly to the correct branch:
 
 ```bash
 # Open Terminal (⌘ + Space, type "Terminal")
 cd ~/Desktop
-git clone https://github.com/Tschiffer46/ForeningsForsaljning.git
+git clone -b copilot/create-sales-rep-organization-app https://github.com/Tschiffer46/ForeningsForsaljning.git
 cd ForeningsForsaljning
 ```
 

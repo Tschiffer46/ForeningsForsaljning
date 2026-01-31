@@ -4,9 +4,13 @@ A comprehensive web application for managing sales teams, customers, orders, and
 
 ## 🚀 FIRST TIME? READ THIS! 
 
+### ⚠️ DOWNLOADED ZIP BUT ONLY GOT ONE README FILE?
+
+**→ Read [DOWNLOAD-INSTRUCTIONS.md](DOWNLOAD-INSTRUCTIONS.md)** - You need to download from the correct branch!
+
 ### 📖 You're Looking at This on GitHub.com?
 
-**→ Read [START-HERE.md](START-HERE.md) FIRST** - It explains how to download this code to your computer!
+**→ Read [START-HERE.md](START-HERE.md) or [DOWNLOAD-INSTRUCTIONS.md](DOWNLOAD-INSTRUCTIONS.md) FIRST** - They explain how to download this code to your computer!
 
 ### 💻 You Already Have the Code on Your Computer?
 
