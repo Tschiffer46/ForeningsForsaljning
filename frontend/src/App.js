@@ -659,26 +659,6 @@ function ProtectedRoute({ children, adminOnly = false }) {
   return children;
 }
 
-// Placeholder pages
-function PlaceholderPage({ title }) {
-  const navigate = useNavigate();
-  const auth = React.useContext(AuthContext);
-  
-  return (
-    <div className="dashboard">
-      <nav className="navbar">
-        <h2>FöreningsFörsäljning - {title}</h2>
-        <button onClick={() => auth.logout()}>Logout</button>
-      </nav>
-      <div className="placeholder-page">
-        <h2>{title}</h2>
-        <p>This feature is coming soon...</p>
-        <button onClick={() => navigate(-1)} className="btn-primary">Go Back</button>
-      </div>
-    </div>
-  );
-}
-
 // Main App Component
 function App() {
   return (
