@@ -1,9 +1,15 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const EventEmitter = require('events');
+
+// Create an event emitter to signal when database is ready
+const dbEvents = new EventEmitter();
+let isInitialized = false;
 
 const db = new sqlite3.Database(path.join(__dirname, 'foreningsforsaljning.db'), (err) => {
   if (err) {
     console.error('Error opening database:', err);
+    dbEvents.emit('error', err);
   } else {
     console.log('Connected to SQLite database');
     initializeDatabase();
@@ -205,6 +211,10 @@ function initializeDatabase() {
     insertDemoData();
 
     console.log('Multi-tenant database initialized successfully with performance indexes');
+    
+    // Signal that database is ready
+    isInitialized = true;
+    dbEvents.emit('ready');
   });
 }
 
@@ -302,4 +312,17 @@ function insertDemoData() {
   });
 }
 
+// Export both the database and the initialization promise
 module.exports = db;
+
+// Add method to wait for database to be ready
+module.exports.waitForReady = () => {
+  return new Promise((resolve, reject) => {
+    if (isInitialized) {
+      resolve();
+    } else {
+      dbEvents.once('ready', resolve);
+      dbEvents.once('error', reject);
+    }
+  });
+};

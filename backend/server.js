@@ -701,12 +701,28 @@ app.use((req, res) => {
   });
 });
 
-// Bind to 0.0.0.0 for Railway deployment (allows external traffic)
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Multi-tenant server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Ready to accept connections`);
-  console.log(`Serving embedded landing page at root`);
-});
+// Wait for database to be ready before starting server
+// This ensures health checks don't fail during Railway deployment
+async function startServer() {
+  try {
+    // Wait for database initialization to complete
+    await db.waitForReady();
+    console.log('Database initialization complete');
+    
+    // Now start the server
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Multi-tenant server running on port ${PORT}`);
+      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`Ready to accept connections`);
+      console.log(`Serving embedded landing page at root`);
+    });
+  } catch (error) {
+    console.error('Failed to initialize database:', error);
+    process.exit(1);
+  }
+}
+
+// Start the server
+startServer();
 
 module.exports = app;
