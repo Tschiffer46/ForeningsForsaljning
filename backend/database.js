@@ -281,13 +281,13 @@ function insertDemoData() {
     `);
 
     // Insert sample orders for some customers
-    db.run(`INSERT OR IGNORE INTO orders (id, club_id, customer_id, quarter, year, total_price, order_date, payment_status) VALUES
-      (1, 1, 1, 'Q1', 2026, 180.0, '2026-01-15', 'paid'),
-      (2, 1, 2, 'Q1', 2026, 162.0, '2026-01-16', 'paid'),
-      (3, 1, 3, 'Q1', 2026, 285.0, '2026-01-17', 'unpaid'),
-      (4, 1, 4, 'Q1', 2026, 190.0, '2026-01-18', 'unpaid'),
-      (5, 1, 5, 'Q1', 2026, 144.0, '2026-01-19', 'paid'),
-      (6, 1, 6, 'Q1', 2026, 200.0, '2026-01-20', 'unpaid')
+    db.run(`INSERT OR IGNORE INTO orders (id, club_id, customer_id, quarter, year, total_amount, order_date, status) VALUES
+      (1, 1, 1, 'Q1', 2026, 180.0, '2026-01-15', 'completed'),
+      (2, 1, 2, 'Q1', 2026, 162.0, '2026-01-16', 'completed'),
+      (3, 1, 3, 'Q1', 2026, 285.0, '2026-01-17', 'pending'),
+      (4, 1, 4, 'Q1', 2026, 190.0, '2026-01-18', 'pending'),
+      (5, 1, 5, 'Q1', 2026, 144.0, '2026-01-19', 'completed'),
+      (6, 1, 6, 'Q1', 2026, 200.0, '2026-01-20', 'pending')
     `);
 
     // Insert order items
@@ -302,13 +302,13 @@ function insertDemoData() {
     `);
 
     // Insert payment records with proper schema
-    db.run(`INSERT OR IGNORE INTO payments (id, order_id, amount, payment_status, payment_date, payment_reference, payment_method) VALUES
-      (1, 1, 180.0, 'paid', '2026-01-16', 'SWISH-001', 'swish'),
-      (2, 2, 162.0, 'paid', '2026-01-17', 'SWISH-002', 'swish'),
-      (3, 3, 285.0, 'unpaid', NULL, NULL, NULL),
-      (4, 4, 190.0, 'unpaid', NULL, NULL, NULL),
-      (5, 5, 144.0, 'paid', '2026-01-20', 'SWISH-005', 'swish'),
-      (6, 6, 200.0, 'unpaid', NULL, NULL, NULL)
+    db.run(`INSERT OR IGNORE INTO payments (id, order_id, amount, paid, payment_date, payment_reference, payment_method) VALUES
+      (1, 1, 180.0, 1, '2026-01-16', 'SWISH-001', 'swish'),
+      (2, 2, 162.0, 1, '2026-01-17', 'SWISH-002', 'swish'),
+      (3, 3, 285.0, 0, NULL, NULL, NULL),
+      (4, 4, 190.0, 0, NULL, NULL, NULL),
+      (5, 5, 144.0, 1, '2026-01-20', 'SWISH-005', 'swish'),
+      (6, 6, 200.0, 0, NULL, NULL, NULL)
     `);
 
     console.log('Demo data inserted successfully');
