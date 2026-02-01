@@ -655,7 +655,45 @@ app.get('/', (req, res) => {
   `);
 });
 
-// Catch-all for undefined routes (must be last!)
+// ===== SERVE REACT FRONTEND =====
+const path = require('path');
+const fs = require('fs');
+
+// Serve static React build files
+const frontendBuild = path.join(__dirname, '..', 'frontend', 'build');
+
+// Check if build directory exists
+if (fs.existsSync(frontendBuild)) {
+  console.log('Serving React frontend from:', frontendBuild);
+  app.use(express.static(frontendBuild));
+  
+  // Catch-all for React routing (specific routes for SPA)
+  app.get('/login', (req, res) => {
+    res.sendFile(path.join(frontendBuild, 'index.html'));
+  });
+  
+  app.get('/customer-order', (req, res) => {
+    res.sendFile(path.join(frontendBuild, 'index.html'));
+  });
+  
+  app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(frontendBuild, 'index.html'));
+  });
+  
+  // Catch-all for other non-API routes
+  app.get('*', (req, res, next) => {
+    // Only serve React app for non-API routes
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(frontendBuild, 'index.html'));
+    } else {
+      next();
+    }
+  });
+} else {
+  console.log('React build not found, serving landing page only');
+}
+
+// Catch-all for undefined API routes (must be last!)
 app.use((req, res) => {
   res.status(404).json({ 
     error: 'Not Found',

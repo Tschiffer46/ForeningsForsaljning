@@ -3,7 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } f
 import axios from 'axios';
 import './App.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+// Use production URL when deployed, localhost for development
+const API_URL = process.env.NODE_ENV === 'production' 
+  ? window.location.origin 
+  : (process.env.REACT_APP_API_URL || 'http://localhost:3001');
 
 // Auth Context
 const AuthContext = React.createContext();
