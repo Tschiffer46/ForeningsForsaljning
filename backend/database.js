@@ -127,7 +127,8 @@ function initializeDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       club_id INTEGER,
       name TEXT NOT NULL,
-      type TEXT NOT NULL,
+      description TEXT,
+      type TEXT,
       price REAL NOT NULL,
       subscription_price REAL,
       sacks_per_pallet INTEGER NOT NULL,
@@ -213,6 +214,30 @@ function initializeDatabase() {
     db.run(`CREATE INDEX IF NOT EXISTS idx_club_billing_club_id ON club_billing(club_id)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_club_billing_status ON club_billing(club_id, status)`);
 
+    // Migrations: Add missing columns to existing tables
+    // Check if description column exists in products table
+    db.all(`PRAGMA table_info(products)`, [], (err, columns) => {
+      if (!err && columns) {
+        const hasDescription = columns.some(col => col.name === 'description');
+        if (!hasDescription) {
+          db.run(`ALTER TABLE products ADD COLUMN description TEXT`, (err) => {
+            if (err) {
+              console.log('Note: description column may already exist or migration failed:', err.message);
+            } else {
+              console.log('Added description column to products table');
+            }
+          });
+        }
+        
+        // Make type column nullable if it's NOT NULL
+        const typeColumn = columns.find(col => col.name === 'type');
+        if (typeColumn && typeColumn.notnull === 1) {
+          // SQLite doesn't support ALTER COLUMN, so we note this
+          console.log('Note: products.type column should be nullable - this requires table recreation');
+        }
+      }
+    });
+
     // Insert demo data for testing
     insertDemoData();
 
@@ -227,11 +252,11 @@ function initializeDatabase() {
 function insertDemoData() {
   db.serialize(() => {
     // Insert global products (club_id = NULL) - 4 products as requested
-    db.run(`INSERT OR IGNORE INTO products (id, club_id, name, type, price, subscription_price, sacks_per_pallet) VALUES
-      (1, NULL, 'Lambi Toapapper', 'toilet_paper', 100.0, 90.0, 50),
-      (2, NULL, 'Lambi Hushållspapper', 'household_paper', 80.0, 72.0, 60),
-      (3, NULL, 'Serla Toapapper', 'toilet_paper', 95.0, 85.0, 50),
-      (4, NULL, 'Serla Hushållspapper', 'household_paper', 75.0, 67.5, 60)
+    db.run(`INSERT OR IGNORE INTO products (id, club_id, name, description, type, price, subscription_price, sacks_per_pallet) VALUES
+      (1, NULL, 'Lambi Toapapper', 'Premium quality toilet paper, soft and strong', 'toilet_paper', 100.0, 90.0, 50),
+      (2, NULL, 'Lambi Hushållspapper', 'Absorbent household paper for kitchen use', 'household_paper', 80.0, 72.0, 60),
+      (3, NULL, 'Serla Toapapper', 'Classic toilet paper, excellent value', 'toilet_paper', 95.0, 85.0, 50),
+      (4, NULL, 'Serla Hushållspapper', 'Multi-purpose household paper', 'household_paper', 75.0, 67.5, 60)
     `);
 
     // Insert demo club (Stockholm IF)
