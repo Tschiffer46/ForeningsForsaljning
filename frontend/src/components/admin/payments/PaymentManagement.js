@@ -3,12 +3,28 @@ import { useNavigate } from 'react-router-dom';
 import { AdminContext } from '../../../contexts/AdminContext';
 import PaymentList from './PaymentList';
 import LoadingSpinner from '../../shared/LoadingSpinner';
+import NavBar from '../../shared/NavBar';
 
 function PaymentManagement() {
   const navigate = useNavigate();
   const { payments, loadPayments, updatePayment, loading } = useContext(AdminContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+
+  // Get user info from localStorage
+  const userName = React.useMemo(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.full_name || user?.name || 'Admin';
+    } catch {
+      return 'Admin';
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
 
   useEffect(() => {
     loadPayments();
@@ -49,11 +65,14 @@ function PaymentManagement() {
   };
 
   return (
-    <div className="dashboard">
-      <nav className="navbar">
-        <h2>Payment Tracking</h2>
-        <button onClick={() => navigate('/admin')}>Back to Dashboard</button>
-      </nav>
+    <>
+      <NavBar 
+        title="Payment Tracking"
+        dashboardPath="/admin"
+        userName={userName}
+        onLogout={handleLogout}
+      />
+      <div className="dashboard" style={{ padding: '2rem' }}>
 
       <div className="stats-cards">
         <div className="stat-card">
@@ -99,6 +118,7 @@ function PaymentManagement() {
         />
       )}
     </div>
+    </>
   );
 }
 

@@ -1,9 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import NavBar from '../shared/NavBar';
 
 const API_URL = process.env.REACT_APP_API_URL || window.location.origin;
 
 function TeamOrders() {
+  const navigate = useNavigate();
+
+  // Get user info from localStorage
+  const userName = React.useMemo(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.name || 'Team Member';
+    } catch {
+      return 'Team Member';
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
+
   const [orders, setOrders] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
@@ -91,7 +110,14 @@ function TeamOrders() {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <>
+      <NavBar 
+        title="Order Management"
+        dashboardPath="/dashboard"
+        userName={userName}
+        onLogout={handleLogout}
+      />
+      <div style={{ padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h2>Order Management</h2>
         <button
@@ -295,6 +321,7 @@ function TeamOrders() {
         </table>
       </div>
     </div>
+    </>
   );
 }
 

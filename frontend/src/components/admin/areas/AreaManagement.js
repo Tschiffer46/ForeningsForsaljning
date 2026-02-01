@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminContext } from '../../../contexts/AdminContext';
+import NavBar from '../../shared/NavBar';
 import AreaList from './AreaList';
 import AreaForm from './AreaForm';
 import LoadingSpinner from '../../shared/LoadingSpinner';
@@ -12,6 +13,21 @@ function AreaManagement() {
   const [editingArea, setEditingArea] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [teamFilter, setTeamFilter] = useState('');
+
+  // Get user info from localStorage
+  const userName = React.useMemo(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.full_name || user?.name || 'Admin';
+    } catch {
+      return 'Admin';
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
 
   useEffect(() => {
     loadAreas();
@@ -52,11 +68,14 @@ function AreaManagement() {
   });
 
   return (
-    <div className="dashboard">
-      <nav className="navbar">
-        <h2>Geographic Areas Management</h2>
-        <button onClick={() => navigate('/admin')}>Back to Dashboard</button>
-      </nav>
+    <>
+      <NavBar 
+        title="Geographic Areas Management"
+        dashboardPath="/admin"
+        userName={userName}
+        onLogout={handleLogout}
+      />
+      <div className="dashboard" style={{ padding: '2rem' }}>
 
       <div className="management-header">
         <div className="search-bar">
@@ -96,6 +115,7 @@ function AreaManagement() {
         />
       )}
     </div>
+    </>
   );
 }
 

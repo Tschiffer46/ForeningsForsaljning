@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import NavBar from '../shared/NavBar';
 
 const API_URL = process.env.REACT_APP_API_URL || window.location.origin;
 
 function TeamCustomers() {
+  const navigate = useNavigate();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -15,6 +18,21 @@ function TeamCustomers() {
     address: '',
     postal_address: ''
   });
+
+  // Get user info from localStorage
+  const userName = React.useMemo(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.name || 'Team Member';
+    } catch {
+      return 'Team Member';
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
 
   useEffect(() => {
     loadCustomers();
@@ -63,11 +81,28 @@ function TeamCustomers() {
   };
 
   if (loading) {
-    return <div style={{ padding: '20px' }}>Loading customers...</div>;
+    return (
+      <>
+        <NavBar 
+          title="Customer Management"
+          dashboardPath="/dashboard"
+          userName={userName}
+          onLogout={handleLogout}
+        />
+        <div style={{ padding: '20px' }}>Loading customers...</div>
+      </>
+    );
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <>
+      <NavBar 
+        title="Customer Management"
+        dashboardPath="/dashboard"
+        userName={userName}
+        onLogout={handleLogout}
+      />
+      <div style={{ padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h2>Customer Management</h2>
         <button
@@ -220,6 +255,7 @@ function TeamCustomers() {
         </table>
       </div>
     </div>
+    </>
   );
 }
 

@@ -4,6 +4,7 @@ import { AdminContext } from '../../../contexts/AdminContext';
 import CustomerList from './CustomerList';
 import CustomerForm from './CustomerForm';
 import LoadingSpinner from '../../shared/LoadingSpinner';
+import NavBar from '../../shared/NavBar';
 
 function CustomerManagement() {
   const navigate = useNavigate();
@@ -12,6 +13,21 @@ function CustomerManagement() {
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [areaFilter, setAreaFilter] = useState('');
+
+  // Get user info from localStorage
+  const userName = React.useMemo(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.full_name || user?.name || 'Admin';
+    } catch {
+      return 'Admin';
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
 
   useEffect(() => {
     loadCustomers();
@@ -53,13 +69,15 @@ function CustomerManagement() {
   });
 
   return (
-    <div className="dashboard">
-      <nav className="navbar">
-        <h2>Customer Management</h2>
-        <button onClick={() => navigate('/admin')}>Back to Dashboard</button>
-      </nav>
-
-      <div className="management-header">
+    <>
+      <NavBar 
+        title="Customer Management"
+        dashboardPath="/admin"
+        userName={userName}
+        onLogout={handleLogout}
+      />
+      <div className="dashboard" style={{ padding: '2rem' }}>
+        <div className="management-header">
         <div className="search-bar">
           <input
             type="text"
@@ -97,6 +115,7 @@ function CustomerManagement() {
         />
       )}
     </div>
+    </>
   );
 }
 

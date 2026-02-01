@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAdmin } from '../../../contexts/AdminContext';
+import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../../shared/LoadingSpinner';
 import Toast from '../../shared/Toast';
 import ConfirmDialog from '../../shared/ConfirmDialog';
+import NavBar from '../../shared/NavBar';
 import ProductList from './ProductList';
 import ProductForm from './ProductForm';
 
@@ -23,6 +25,22 @@ const ProductManagement = () => {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(false);
+  const navigate = useNavigate();
+
+  // Get user info from localStorage
+  const userName = React.useMemo(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.full_name || user?.name || 'Admin';
+    } catch {
+      return 'Admin';
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
 
   useEffect(() => {
     loadProducts();
@@ -89,7 +107,14 @@ const ProductManagement = () => {
   });
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <>
+      <NavBar 
+        title="Product Management"
+        dashboardPath="/admin"
+        userName={userName}
+        onLogout={handleLogout}
+      />
+      <div style={{ padding: '2rem' }}>
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -193,6 +218,7 @@ const ProductManagement = () => {
         />
       )}
     </div>
+    </>
   );
 };
 

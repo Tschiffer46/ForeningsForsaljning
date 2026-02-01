@@ -4,6 +4,7 @@ import { AdminContext } from '../../../contexts/AdminContext';
 import TeamList from './TeamList';
 import TeamForm from './TeamForm';
 import LoadingSpinner from '../../shared/LoadingSpinner';
+import NavBar from '../../shared/NavBar';
 
 function TeamManagement() {
   const navigate = useNavigate();
@@ -11,6 +12,21 @@ function TeamManagement() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Get user info from localStorage
+  const userName = React.useMemo(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.full_name || user?.name || 'Admin';
+    } catch {
+      return 'Admin';
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
 
   useEffect(() => {
     loadTeams();
@@ -49,11 +65,14 @@ function TeamManagement() {
   );
 
   return (
-    <div className="dashboard">
-      <nav className="navbar">
-        <h2>Team Management</h2>
-        <button onClick={() => navigate('/admin')}>Back to Dashboard</button>
-      </nav>
+    <>
+      <NavBar 
+        title="Team Management"
+        dashboardPath="/admin"
+        userName={userName}
+        onLogout={handleLogout}
+      />
+      <div className="dashboard" style={{ padding: '2rem' }}>
 
       <div className="management-header">
         <div className="search-bar">
@@ -86,6 +105,7 @@ function TeamManagement() {
         />
       )}
     </div>
+    </>
   );
 }
 

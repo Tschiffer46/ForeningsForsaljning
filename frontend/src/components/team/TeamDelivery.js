@@ -1,9 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import NavBar from '../shared/NavBar';
 
 const API_URL = process.env.REACT_APP_API_URL || window.location.origin;
 
 function TeamDelivery() {
+  const navigate = useNavigate();
+
+  // Get user info from localStorage
+  const userName = React.useMemo(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.name || 'Team Member';
+    } catch {
+      return 'Team Member';
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,7 +59,14 @@ function TeamDelivery() {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <>
+      <NavBar 
+        title="Delivery Tracking"
+        dashboardPath="/dashboard"
+        userName={userName}
+        onLogout={handleLogout}
+      />
+      <div style={{ padding: '20px' }}>
       <h2 style={{ marginBottom: '20px' }}>Delivery Tracking</h2>
       
       <div style={{
@@ -150,6 +176,7 @@ function TeamDelivery() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
