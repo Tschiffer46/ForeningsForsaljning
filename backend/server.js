@@ -294,6 +294,216 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
+// ===== GEOGRAPHIC AREAS ROUTES =====
+app.get('/api/areas', async (req, res) => {
+  try {
+    const club_id = req.headers['x-club-id'];
+    if (!club_id) {
+      return res.status(400).json({ error: 'Club ID required' });
+    }
+    
+    const areas = await dbAll(`
+      SELECT a.*, t.name as team_name
+      FROM geographical_areas a
+      LEFT JOIN teams t ON a.team_id = t.id
+      WHERE a.club_id = ?
+      ORDER BY a.name
+    `, [club_id]);
+    res.json(areas);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/areas', async (req, res) => {
+  try {
+    const club_id = req.headers['x-club-id'];
+    if (!club_id) {
+      return res.status(400).json({ error: 'Club ID required' });
+    }
+    
+    const { name, description, postal_codes, team_id } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ error: 'Name is required' });
+    }
+
+    const result = await dbRun(
+      `INSERT INTO geographical_areas (club_id, name, description, postal_codes, team_id) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [club_id, name, description || '', postal_codes || '', team_id || null]
+    );
+
+    const newArea = await dbGet('SELECT * FROM geographical_areas WHERE id = ?', [result.id]);
+    res.status(201).json(newArea);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/areas/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, postal_codes, team_id } = req.body;
+
+    const area = await dbGet('SELECT * FROM geographical_areas WHERE id = ?', [id]);
+    if (!area) {
+      return res.status(404).json({ error: 'Area not found' });
+    }
+
+    await dbRun(
+      `UPDATE geographical_areas 
+       SET name = ?, description = ?, postal_codes = ?, team_id = ?
+       WHERE id = ?`,
+      [
+        name !== undefined ? name : area.name,
+        description !== undefined ? description : area.description,
+        postal_codes !== undefined ? postal_codes : area.postal_codes,
+        team_id !== undefined ? team_id : area.team_id,
+        id
+      ]
+    );
+
+    const updatedArea = await dbGet('SELECT * FROM geographical_areas WHERE id = ?', [id]);
+    res.json(updatedArea);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/areas/:id/assign-team', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { team_id } = req.body;
+
+    const area = await dbGet('SELECT * FROM geographical_areas WHERE id = ?', [id]);
+    if (!area) {
+      return res.status(404).json({ error: 'Area not found' });
+    }
+
+    await dbRun(
+      'UPDATE geographical_areas SET team_id = ? WHERE id = ?',
+      [team_id || null, id]
+    );
+
+    const updatedArea = await dbGet('SELECT * FROM geographical_areas WHERE id = ?', [id]);
+    res.json(updatedArea);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/areas/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Check if any customers are assigned to this area
+    const customers = await dbAll('SELECT id FROM customers WHERE area_id = ?', [id]);
+    if (customers.length > 0) {
+      return res.status(400).json({ 
+        error: 'Cannot delete area with assigned customers',
+        customerCount: customers.length 
+      });
+    }
+    
+    await dbRun('DELETE FROM geographical_areas WHERE id = ?', [id]);
+    res.json({ message: 'Area deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ===== PAYMENT ROUTES =====
+app.get('/api/payments', async (req, res) => {
+  try {
+    const club_id = req.headers['x-club-id'];
+    if (!club_id) {
+      return res.status(400).json({ error: 'Club ID required' });
+    }
+    
+    const { status } = req.query;
+    
+    let query = `
+      SELECT p.*, o.customer_id, o.order_date, o.total_amount, o.status as order_status,
+             c.name as customer_name, c.customer_number
+      FROM payments p
+      INNER JOIN orders o ON p.order_id = o.id
+      INNER JOIN customers c ON o.customer_id = c.id
+      WHERE o.club_id = ?
+    `;
+    
+    const params = [club_id];
+    
+    if (status === 'paid') {
+      query += ' AND p.paid = 1';
+    } else if (status === 'unpaid') {
+      query += ' AND p.paid = 0';
+    }
+    
+    query += ' ORDER BY o.order_date DESC';
+    
+    const payments = await dbAll(query, params);
+    res.json(payments);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/payments/stats', async (req, res) => {
+  try {
+    const club_id = req.headers['x-club-id'];
+    if (!club_id) {
+      return res.status(400).json({ error: 'Club ID required' });
+    }
+    
+    const stats = await dbGet(`
+      SELECT 
+        COUNT(*) as total_orders,
+        SUM(CASE WHEN p.paid = 1 THEN 1 ELSE 0 END) as paid_orders,
+        SUM(CASE WHEN p.paid = 0 THEN 1 ELSE 0 END) as unpaid_orders,
+        SUM(p.amount) as total_amount,
+        SUM(CASE WHEN p.paid = 1 THEN p.amount ELSE 0 END) as paid_amount,
+        SUM(CASE WHEN p.paid = 0 THEN p.amount ELSE 0 END) as unpaid_amount
+      FROM payments p
+      INNER JOIN orders o ON p.order_id = o.id
+      WHERE o.club_id = ?
+    `, [club_id]);
+    
+    res.json(stats);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/payments/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { paid, payment_reference, payment_date } = req.body;
+
+    const payment = await dbGet('SELECT * FROM payments WHERE id = ?', [id]);
+    if (!payment) {
+      return res.status(404).json({ error: 'Payment not found' });
+    }
+
+    await dbRun(
+      `UPDATE payments 
+       SET paid = ?, payment_reference = ?, payment_date = ?
+       WHERE id = ?`,
+      [
+        paid !== undefined ? paid : payment.paid,
+        payment_reference !== undefined ? payment_reference : payment.payment_reference,
+        payment_date || (paid ? new Date().toISOString() : payment.payment_date),
+        id
+      ]
+    );
+
+    const updatedPayment = await dbGet('SELECT * FROM payments WHERE id = ?', [id]);
+    res.json(updatedPayment);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ===== CUSTOMER ROUTES =====
 app.get('/api/customers', async (req, res) => {
   try {
