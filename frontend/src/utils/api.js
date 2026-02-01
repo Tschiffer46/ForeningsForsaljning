@@ -125,6 +125,15 @@ const api = {
     delete: (id) => api.delete(`/api/areas/${id}`),
     assignTeam: (id, teamId) => api.put(`/api/areas/${id}/assign-team`, { teamId }),
   },
+
+  // Payments
+  payments: {
+    getAll: () => api.get('/api/payments'),
+    getById: (id) => api.get(`/api/payments/${id}`),
+    update: (id, data) => api.put(`/api/payments/${id}`, data),
+    markPaid: (id, reference) => api.put(`/api/payments/${id}/mark-paid`, { payment_reference: reference }),
+    markUnpaid: (id) => api.put(`/api/payments/${id}/mark-unpaid`),
+  },
 };
 
 export default api;

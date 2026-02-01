@@ -30,7 +30,7 @@ export const validators = {
   },
 
   phone: (value) => {
-    if (value && !/^[\d\s\-\+\(\)]+$/.test(value)) {
+    if (value && !/^[\d\s\-+()]+$/.test(value)) {
       return 'Invalid phone number';
     }
     return null;

@@ -91,14 +91,20 @@ function initializeDatabase() {
     db.run(`CREATE TABLE IF NOT EXISTS geographical_areas (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       club_id INTEGER NOT NULL,
-      team_id INTEGER NOT NULL,
+      team_id INTEGER,
       name TEXT NOT NULL,
-      coordinates TEXT NOT NULL,
+      description TEXT,
+      postal_codes TEXT,
+      coordinates TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE CASCADE,
-      FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
+      FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE SET NULL
     )`);
 
+    // Alias for backwards compatibility
+    // Note: geographic_areas is the table name used by frontend
+    // geographical_areas is kept for database consistency
+    // Both names refer to the same table in this implementation
     // Customers table (belongs to club)
     db.run(`CREATE TABLE IF NOT EXISTS customers (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -253,7 +259,7 @@ function insertDemoData() {
     `);
 
     // Insert geographic areas with proper schema
-    db.run(`INSERT OR IGNORE INTO geographic_areas (id, club_id, name, description, postal_codes, team_id) VALUES
+    db.run(`INSERT OR IGNORE INTO geographical_areas (id, club_id, name, description, postal_codes, team_id) VALUES
       (1, 1, 'Norrmalm Centrum', 'Central Stockholm, Norrmalm district', '11135, 11136, 11143, 11151', 1),
       (2, 1, 'Södermalm Syd', 'Southern Stockholm, Södermalm area', '11646, 11830, 11831', 2),
       (3, 1, 'Östermalm', 'Eastern Stockholm district', '11421, 11437, 11438', 1),
@@ -261,17 +267,17 @@ function insertDemoData() {
     `);
 
     // Insert 10 customers as requested
-    db.run(`INSERT OR IGNORE INTO customers (id, club_id, customer_number, name, address, postal_code, city, phone, email, geographic_area_id) VALUES
-      (1, 1, 'CUST001', 'Anders Svensson', 'Kungsgatan 1', '11143', 'Stockholm', '08-123-4567', 'anders.s@example.com', 1),
-      (2, 1, 'CUST002', 'Britta Johansson', 'Drottninggatan 10', '11151', 'Stockholm', '08-234-5678', 'britta.j@example.com', 1),
-      (3, 1, 'CUST003', 'Carl Eriksson', 'Götgatan 15', '11646', 'Stockholm', '08-345-6789', 'carl.e@example.com', 2),
-      (4, 1, 'CUST004', 'Diana Larsson', 'Folkungagatan 20', '11830', 'Stockholm', '08-456-7890', 'diana.l@example.com', 2),
-      (5, 1, 'CUST005', 'Erik Pettersson', 'Karlavägen 5', '11421', 'Stockholm', '08-567-8901', 'erik.p@example.com', 3),
-      (6, 1, 'CUST006', 'Frida Nilsson', 'Storgatan 8', '11437', 'Stockholm', '08-678-9012', 'frida.n@example.com', 3),
-      (7, 1, 'CUST007', 'Gustav Andersson', 'Hantverkargatan 12', '11221', 'Stockholm', '08-789-0123', 'gustav.a@example.com', 4),
-      (8, 1, 'CUST008', 'Helena Bergström', 'Scheelegatan 3', '11234', 'Stockholm', '08-890-1234', 'helena.b@example.com', 4),
-      (9, 1, 'CUST009', 'Ingvar Karlsson', 'Sveavägen 44', '11135', 'Stockholm', '08-901-2345', 'ingvar.k@example.com', 1),
-      (10, 1, 'CUST010', 'Julia Lindström', 'Hornsgatan 22', '11831', 'Stockholm', '08-012-3456', 'julia.l@example.com', 2)
+    db.run(`INSERT OR IGNORE INTO customers (id, club_id, customer_number, name, address, postal_address, phone_number, email, area_id) VALUES
+      (1, 1, 'CUST001', 'Anders Svensson', 'Kungsgatan 1', '11143 Stockholm', '08-123-4567', 'anders.s@example.com', 1),
+      (2, 1, 'CUST002', 'Britta Johansson', 'Drottninggatan 10', '11151 Stockholm', '08-234-5678', 'britta.j@example.com', 1),
+      (3, 1, 'CUST003', 'Carl Eriksson', 'Götgatan 15', '11646 Stockholm', '08-345-6789', 'carl.e@example.com', 2),
+      (4, 1, 'CUST004', 'Diana Larsson', 'Folkungagatan 20', '11830 Stockholm', '08-456-7890', 'diana.l@example.com', 2),
+      (5, 1, 'CUST005', 'Erik Pettersson', 'Karlavägen 5', '11421 Stockholm', '08-567-8901', 'erik.p@example.com', 3),
+      (6, 1, 'CUST006', 'Frida Nilsson', 'Storgatan 8', '11437 Stockholm', '08-678-9012', 'frida.n@example.com', 3),
+      (7, 1, 'CUST007', 'Gustav Andersson', 'Hantverkargatan 12', '11221 Stockholm', '08-789-0123', 'gustav.a@example.com', 4),
+      (8, 1, 'CUST008', 'Helena Bergström', 'Scheelegatan 3', '11234 Stockholm', '08-890-1234', 'helena.b@example.com', 4),
+      (9, 1, 'CUST009', 'Ingvar Karlsson', 'Sveavägen 44', '11135 Stockholm', '08-901-2345', 'ingvar.k@example.com', 1),
+      (10, 1, 'CUST010', 'Julia Lindström', 'Hornsgatan 22', '11831 Stockholm', '08-012-3456', 'julia.l@example.com', 2)
     `);
 
     // Insert sample orders for some customers

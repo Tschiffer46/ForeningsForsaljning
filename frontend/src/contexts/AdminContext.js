@@ -3,6 +3,8 @@ import api from '../utils/api';
 
 const AdminContext = createContext();
 
+export { AdminContext }; // Export the context itself
+
 export const useAdmin = () => {
   const context = useContext(AdminContext);
   if (!context) {
@@ -31,9 +33,20 @@ export const AdminProvider = ({ children }) => {
   // State for orders/payments
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [payments, setPayments] = useState([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(false);
 
   // Toast notifications
   const [toast, setToast] = useState(null);
+
+  // Toast helper - defined first since other methods use it
+  const showToast = useCallback((message, type = 'info') => {
+    setToast({ message, type, id: Date.now() });
+  }, [showToast]);
+
+  const hideToast = useCallback(() => {
+    setToast(null);
+  }, [showToast]);
 
   // Products methods
   const loadProducts = useCallback(async () => {
@@ -48,7 +61,7 @@ export const AdminProvider = ({ children }) => {
     } finally {
       setProductsLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   const createProduct = useCallback(async (productData) => {
     try {
@@ -60,7 +73,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   const updateProduct = useCallback(async (id, productData) => {
     try {
@@ -72,7 +85,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   const deleteProduct = useCallback(async (id) => {
     try {
@@ -83,7 +96,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   // Teams methods
   const loadTeams = useCallback(async () => {
@@ -98,7 +111,7 @@ export const AdminProvider = ({ children }) => {
     } finally {
       setTeamsLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   const createTeam = useCallback(async (teamData) => {
     try {
@@ -110,7 +123,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   const updateTeam = useCallback(async (id, teamData) => {
     try {
@@ -122,7 +135,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   const deleteTeam = useCallback(async (id) => {
     try {
@@ -133,7 +146,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   // Customers methods
   const loadCustomers = useCallback(async () => {
@@ -148,7 +161,7 @@ export const AdminProvider = ({ children }) => {
     } finally {
       setCustomersLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   const createCustomer = useCallback(async (customerData) => {
     try {
@@ -160,7 +173,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   const updateCustomer = useCallback(async (id, customerData) => {
     try {
@@ -172,7 +185,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   const deleteCustomer = useCallback(async (id) => {
     try {
@@ -183,7 +196,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   // Areas methods
   const loadAreas = useCallback(async () => {
@@ -198,7 +211,7 @@ export const AdminProvider = ({ children }) => {
     } finally {
       setAreasLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   const createArea = useCallback(async (areaData) => {
     try {
@@ -210,7 +223,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   const updateArea = useCallback(async (id, areaData) => {
     try {
@@ -222,7 +235,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   const deleteArea = useCallback(async (id) => {
     try {
@@ -233,7 +246,7 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
   // Orders methods
   const loadOrders = useCallback(async () => {
@@ -248,7 +261,7 @@ export const AdminProvider = ({ children }) => {
     } finally {
       setOrdersLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   const markOrderPaid = useCallback(async (id, reference) => {
     try {
@@ -259,16 +272,35 @@ export const AdminProvider = ({ children }) => {
       showToast(error.message, 'error');
       throw error;
     }
-  }, []);
+  }, [showToast]);
 
-  // Toast helper
-  const showToast = useCallback((message, type = 'info') => {
-    setToast({ message, type, id: Date.now() });
-  }, []);
+  // Payment methods
+  const loadPayments = useCallback(async () => {
+    setPaymentsLoading(true);
+    try {
+      const data = await api.payments.getAll();
+      setPayments(data);
+      return data;
+    } catch (error) {
+      showToast(error.message, 'error');
+      throw error;
+    } finally {
+      setPaymentsLoading(false);
+    }
+  }, [showToast]);
 
-  const hideToast = useCallback(() => {
-    setToast(null);
-  }, []);
+  const updatePayment = useCallback(async (id, paymentData) => {
+    try {
+      const updated = await api.payments.update(id, paymentData);
+      setPayments(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
+      await loadPayments(); // Reload to get fresh data
+      showToast('Payment updated successfully', 'success');
+      return updated;
+    } catch (error) {
+      showToast(error.message, 'error');
+      throw error;
+    }
+  }, [loadPayments, showToast]);
 
   const value = {
     // Products
@@ -308,6 +340,22 @@ export const AdminProvider = ({ children }) => {
     ordersLoading,
     loadOrders,
     markOrderPaid,
+
+    // Payments
+    payments,
+    paymentsLoading,
+    loadPayments,
+    updatePayment,
+
+    // Loading state (combined for convenience)
+    loading: {
+      products: productsLoading,
+      teams: teamsLoading,
+      customers: customersLoading,
+      areas: areasLoading,
+      orders: ordersLoading,
+      payments: paymentsLoading
+    },
 
     // Toast
     toast,

@@ -7,7 +7,7 @@ import LoadingSpinner from '../../shared/LoadingSpinner';
 
 function CustomerManagement() {
   const navigate = useNavigate();
-  const { customers, areas, teams, loadCustomers, loadAreas, loadTeams, createCustomer, updateCustomer, deleteCustomer, loading } = useContext(AdminContext);
+  const { customers, areas, loadCustomers, loadAreas, createCustomer, updateCustomer, deleteCustomer, loading } = useContext(AdminContext);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,8 +16,7 @@ function CustomerManagement() {
   useEffect(() => {
     loadCustomers();
     loadAreas();
-    loadTeams();
-  }, [loadCustomers, loadAreas, loadTeams]);
+  }, [loadCustomers, loadAreas]);
 
   const handleAdd = () => {
     setEditingCustomer(null);
