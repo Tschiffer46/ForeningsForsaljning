@@ -354,6 +354,26 @@ The application is deployed on Railway.app with:
 }
 ```
 
+### Frontend Deployment
+
+The React frontend is built during Railway deployment and served as static files by the Express backend:
+
+**Build Process:**
+1. `npm run railway-build` installs frontend dependencies
+2. `react-scripts build` creates production bundle in `frontend/build/`
+3. Express server detects build and serves it at root URL
+
+**Route Handling:**
+- Static files served from `frontend/build/` directory
+- React Router handles client-side routing
+- API routes preserved at `/api/*` paths
+- Fallback to `index.html` for non-API, non-file routes
+
+**Critical Implementation Details:**
+- Route precedence: React static serving must come before root route
+- Wildcard catch-all: Use `app.use(...)` instead of `app.get('*', ...)` for Express 5+
+- Conditional logic: Landing page only serves when build directory doesn't exist
+
 ### Environment Variables
 
 **Required:**
