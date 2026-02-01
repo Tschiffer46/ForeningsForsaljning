@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
+import { AdminProvider } from './contexts/AdminContext';
+import ProductManagement from './components/admin/products/ProductManagement';
 
 // Use production URL when deployed, localhost for development
 const API_URL = process.env.NODE_ENV === 'production' 
@@ -715,7 +717,9 @@ function App() {
           } />
           <Route path="/admin/products" element={
             <ProtectedRoute adminOnly={true}>
-              <PlaceholderPage title="Manage Products" />
+              <AdminProvider>
+                <ProductManagement />
+              </AdminProvider>
             </ProtectedRoute>
           } />
           <Route path="/admin/payments" element={

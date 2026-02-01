@@ -209,8 +209,86 @@ app.post('/api/teams/:teamId/members', async (req, res) => {
 // ===== PRODUCT ROUTES (Global products) =====
 app.get('/api/products', async (req, res) => {
   try {
-    const products = await dbAll('SELECT * FROM products WHERE (club_id IS NULL OR club_id = ?) AND active = 1 ORDER BY name', [req.headers['x-club-id'] || null]);
+    const showAll = req.query.all === 'true'; // Admin can see all products including inactive
+    const activeFilter = showAll ? '' : 'AND active = 1';
+    const products = await dbAll(
+      `SELECT * FROM products WHERE (club_id IS NULL OR club_id = ?) ${activeFilter} ORDER BY name`, 
+      [req.headers['x-club-id'] || null]
+    );
     res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Create product
+app.post('/api/products', async (req, res) => {
+  try {
+    const { name, description, price, subscription_price, sacks_per_pallet, club_id } = req.body;
+    
+    if (!name || !price || !sacks_per_pallet) {
+      return res.status(400).json({ error: 'Name, price, and sacks_per_pallet are required' });
+    }
+
+    const result = await dbRun(
+      `INSERT INTO products (name, description, price, subscription_price, sacks_per_pallet, club_id, active) 
+       VALUES (?, ?, ?, ?, ?, ?, 1)`,
+      [name, description || '', price, subscription_price || price, sacks_per_pallet, club_id || null]
+    );
+
+    const newProduct = await dbGet('SELECT * FROM products WHERE id = ?', [result.id]);
+    res.status(201).json(newProduct);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update product
+app.put('/api/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, price, subscription_price, sacks_per_pallet, active } = req.body;
+
+    const product = await dbGet('SELECT * FROM products WHERE id = ?', [id]);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    await dbRun(
+      `UPDATE products 
+       SET name = ?, description = ?, price = ?, subscription_price = ?, sacks_per_pallet = ?, active = ?
+       WHERE id = ?`,
+      [
+        name !== undefined ? name : product.name,
+        description !== undefined ? description : product.description,
+        price !== undefined ? price : product.price,
+        subscription_price !== undefined ? subscription_price : product.subscription_price,
+        sacks_per_pallet !== undefined ? sacks_per_pallet : product.sacks_per_pallet,
+        active !== undefined ? active : product.active,
+        id
+      ]
+    );
+
+    const updatedProduct = await dbGet('SELECT * FROM products WHERE id = ?', [id]);
+    res.json(updatedProduct);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete product (soft delete - set active = 0)
+app.delete('/api/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await dbGet('SELECT * FROM products WHERE id = ?', [id]);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    // Soft delete - set active to 0
+    await dbRun('UPDATE products SET active = 0 WHERE id = ?', [id]);
+    res.json({ message: 'Product deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
