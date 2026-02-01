@@ -220,7 +220,7 @@ function initializeDatabase() {
 
 function insertDemoData() {
   db.serialize(() => {
-    // Insert global products (club_id = NULL)
+    // Insert global products (club_id = NULL) - 4 products as requested
     db.run(`INSERT OR IGNORE INTO products (id, club_id, name, type, price, subscription_price, sacks_per_pallet) VALUES
       (1, NULL, 'Lambi Toapapper', 'toilet_paper', 100.0, 90.0, 50),
       (2, NULL, 'Lambi Hushållspapper', 'household_paper', 80.0, 72.0, 60),
@@ -228,27 +228,20 @@ function insertDemoData() {
       (4, NULL, 'Serla Hushållspapper', 'household_paper', 75.0, 67.5, 60)
     `);
 
-    // Insert demo clubs
+    // Insert demo club (Stockholm IF)
     db.run(`INSERT OR IGNORE INTO clubs (id, name, slug, geographic_area, primary_color, secondary_color, subscription_status, monthly_fee, contact_name, contact_email) VALUES
-      (1, 'Stockholm Idrottsförening', 'stockholm-if', 'Stockholm County', '#0066CC', '#FFD700', 'active', 299.0, 'Eva Karlsson', 'eva@stockholmif.se'),
-      (2, 'Göteborg Friidrott', 'goteborg-ff', 'Västra Götaland County', '#009933', '#FFFFFF', 'active', 299.0, 'Lars Svensson', 'lars@goteborgff.se'),
-      (3, 'Malmö Sportklubb', 'malmo-sk', 'Skåne County', '#CC0000', '#000000', 'trial', 299.0, 'Anna Nilsson', 'anna@malmosk.se')
+      (1, 'Stockholm Idrottsförening', 'stockholm-if', 'Stockholm County', '#0066CC', '#FFD700', 'active', 299.0, 'Eva Karlsson', 'eva@stockholmif.se')
     `);
 
-    // Insert admin users for each club
+    // Insert admin user for Stockholm IF
     db.run(`INSERT OR IGNORE INTO admin_users (club_id, username, password, full_name, email) VALUES
-      (1, 'admin.stockholm', 'demo123', 'Eva Karlsson', 'eva@stockholmif.se'),
-      (2, 'admin.goteborg', 'demo123', 'Lars Svensson', 'lars@goteborgff.se'),
-      (3, 'admin.malmo', 'demo123', 'Anna Nilsson', 'anna@malmosk.se')
+      (1, 'admin.stockholm', 'demo123', 'Eva Karlsson', 'eva@stockholmif.se')
     `);
 
-    // Insert teams for Stockholm IF
+    // Insert 2 teams as requested
     db.run(`INSERT OR IGNORE INTO teams (id, club_id, name, username, password) VALUES
       (1, 1, 'Team Norrmalm', 'norrmalm', 'team123'),
-      (2, 1, 'Team Södermalm', 'sodermalm', 'team123'),
-      (3, 2, 'Team Centrum', 'centrum', 'team123'),
-      (4, 2, 'Team Hisingen', 'hisingen', 'team123'),
-      (5, 3, 'Team Västra', 'vastra', 'team123')
+      (2, 1, 'Team Södermalm', 'sodermalm', 'team123')
     `);
 
     // Insert team members
@@ -256,37 +249,39 @@ function insertDemoData() {
       (1, 'Anders Andersson', '070-123-4567', 'anders@example.com'),
       (1, 'Britta Bengtsson', '070-234-5678', 'britta@example.com'),
       (2, 'Carl Carlsson', '070-345-6789', 'carl@example.com'),
-      (3, 'David Davidsson', '070-456-7890', 'david@example.com'),
-      (4, 'Emma Eriksson', '070-567-8901', 'emma@example.com')
+      (2, 'Diana Davidsson', '070-456-7890', 'diana@example.com')
     `);
 
-    // Insert geographical areas (simplified - no actual coordinates for demo)
-    db.run(`INSERT OR IGNORE INTO geographical_areas (id, club_id, team_id, name, coordinates) VALUES
-      (1, 1, 1, 'Norrmalm Centrum', '{"type":"Polygon","coordinates":[[[18.05,59.33],[18.07,59.33],[18.07,59.34],[18.05,59.34],[18.05,59.33]]]}'),
-      (2, 1, 2, 'Södermalm Syd', '{"type":"Polygon","coordinates":[[[18.04,59.31],[18.06,59.31],[18.06,59.32],[18.04,59.32],[18.04,59.31]]]}'),
-      (3, 2, 3, 'Göteborg Centrum', '{"type":"Polygon","coordinates":[[[11.96,57.70],[11.98,57.70],[11.98,57.71],[11.96,57.71],[11.96,57.70]]]}'),
-      (4, 2, 4, 'Hisingen Nord', '{"type":"Polygon","coordinates":[[[11.93,57.72],[11.95,57.72],[11.95,57.73],[11.93,57.73],[11.93,57.72]]]}'),
-      (5, 3, 5, 'Malmö Väster', '{"type":"Polygon","coordinates":[[[12.99,55.60],[13.01,55.60],[13.01,55.61],[12.99,55.61],[12.99,55.60]]]}')
+    // Insert geographic areas with proper schema
+    db.run(`INSERT OR IGNORE INTO geographic_areas (id, club_id, name, description, postal_codes, team_id) VALUES
+      (1, 1, 'Norrmalm Centrum', 'Central Stockholm, Norrmalm district', '11135, 11136, 11143, 11151', 1),
+      (2, 1, 'Södermalm Syd', 'Southern Stockholm, Södermalm area', '11646, 11830, 11831', 2),
+      (3, 1, 'Östermalm', 'Eastern Stockholm district', '11421, 11437, 11438', 1),
+      (4, 1, 'Kungsholmen', 'Western Stockholm island', '11220, 11221, 11234', NULL)
     `);
 
-    // Insert sample customers
-    db.run(`INSERT OR IGNORE INTO customers (club_id, customer_number, name, address, postal_address, phone_number, email, area_id) VALUES
-      (1, 'CUST001', 'Anders Svensson', 'Kungsgatan 1', '111 43 Stockholm', '08-123-4567', 'anders.s@example.com', 1),
-      (1, 'CUST002', 'Britta Johansson', 'Drottninggatan 10', '111 51 Stockholm', '08-234-5678', 'britta.j@example.com', 1),
-      (1, 'CUST003', 'Carl Eriksson', 'Götgatan 15', '118 46 Stockholm', '08-345-6789', 'carl.e@example.com', 2),
-      (1, 'CUST004', 'Diana Larsson', 'Folkungagatan 20', '116 30 Stockholm', '08-456-7890', 'diana.l@example.com', 2),
-      (2, 'CUST001', 'Erik Pettersson', 'Avenyn 5', '411 36 Göteborg', '031-123-4567', 'erik.p@example.com', 3),
-      (2, 'CUST002', 'Frida Nilsson', 'Kungsgatan 12', '411 19 Göteborg', '031-234-5678', 'frida.n@example.com', 3),
-      (3, 'CUST001', 'Gustav Andersson', 'Stortorget 3', '211 22 Malmö', '040-123-4567', 'gustav.a@example.com', 5)
+    // Insert 10 customers as requested
+    db.run(`INSERT OR IGNORE INTO customers (id, club_id, customer_number, name, address, postal_code, city, phone, email, geographic_area_id) VALUES
+      (1, 1, 'CUST001', 'Anders Svensson', 'Kungsgatan 1', '11143', 'Stockholm', '08-123-4567', 'anders.s@example.com', 1),
+      (2, 1, 'CUST002', 'Britta Johansson', 'Drottninggatan 10', '11151', 'Stockholm', '08-234-5678', 'britta.j@example.com', 1),
+      (3, 1, 'CUST003', 'Carl Eriksson', 'Götgatan 15', '11646', 'Stockholm', '08-345-6789', 'carl.e@example.com', 2),
+      (4, 1, 'CUST004', 'Diana Larsson', 'Folkungagatan 20', '11830', 'Stockholm', '08-456-7890', 'diana.l@example.com', 2),
+      (5, 1, 'CUST005', 'Erik Pettersson', 'Karlavägen 5', '11421', 'Stockholm', '08-567-8901', 'erik.p@example.com', 3),
+      (6, 1, 'CUST006', 'Frida Nilsson', 'Storgatan 8', '11437', 'Stockholm', '08-678-9012', 'frida.n@example.com', 3),
+      (7, 1, 'CUST007', 'Gustav Andersson', 'Hantverkargatan 12', '11221', 'Stockholm', '08-789-0123', 'gustav.a@example.com', 4),
+      (8, 1, 'CUST008', 'Helena Bergström', 'Scheelegatan 3', '11234', 'Stockholm', '08-890-1234', 'helena.b@example.com', 4),
+      (9, 1, 'CUST009', 'Ingvar Karlsson', 'Sveavägen 44', '11135', 'Stockholm', '08-901-2345', 'ingvar.k@example.com', 1),
+      (10, 1, 'CUST010', 'Julia Lindström', 'Hornsgatan 22', '11831', 'Stockholm', '08-012-3456', 'julia.l@example.com', 2)
     `);
 
-    // Insert sample orders
-    db.run(`INSERT OR IGNORE INTO orders (id, club_id, customer_id, quarter, year, total_amount, status, delivered) VALUES
-      (1, 1, 1, 'Q1', 2026, 180.0, 'pending', 0),
-      (2, 1, 2, 'Q1', 2026, 162.0, 'pending', 0),
-      (3, 1, 3, 'Q1', 2026, 285.0, 'pending', 0),
-      (4, 2, 5, 'Q1', 2026, 190.0, 'pending', 0),
-      (5, 2, 6, 'Q1', 2026, 144.0, 'pending', 0)
+    // Insert sample orders for some customers
+    db.run(`INSERT OR IGNORE INTO orders (id, club_id, customer_id, quarter, year, total_price, order_date, payment_status) VALUES
+      (1, 1, 1, 'Q1', 2026, 180.0, '2026-01-15', 'paid'),
+      (2, 1, 2, 'Q1', 2026, 162.0, '2026-01-16', 'paid'),
+      (3, 1, 3, 'Q1', 2026, 285.0, '2026-01-17', 'unpaid'),
+      (4, 1, 4, 'Q1', 2026, 190.0, '2026-01-18', 'unpaid'),
+      (5, 1, 5, 'Q1', 2026, 144.0, '2026-01-19', 'paid'),
+      (6, 1, 6, 'Q1', 2026, 200.0, '2026-01-20', 'unpaid')
     `);
 
     // Insert order items
@@ -296,19 +291,26 @@ function insertDemoData() {
       (2, 2, 1, 1, 72.0),
       (3, 1, 3, 0, 100.0),
       (4, 1, 2, 0, 100.0),
-      (5, 2, 2, 1, 72.0)
+      (5, 2, 2, 1, 72.0),
+      (6, 1, 2, 0, 100.0)
     `);
 
-    // Insert payment records
-    db.run(`INSERT OR IGNORE INTO payments (order_id, amount, paid, payment_method) VALUES
-      (1, 180.0, 1, 'swish'),
-      (2, 162.0, 1, 'swish'),
-      (3, 285.0, 0, 'swish'),
-      (4, 190.0, 0, 'swish'),
-      (5, 144.0, 0, 'swish')
+    // Insert payment records with proper schema
+    db.run(`INSERT OR IGNORE INTO payments (id, order_id, amount, payment_status, payment_date, payment_reference, payment_method) VALUES
+      (1, 1, 180.0, 'paid', '2026-01-16', 'SWISH-001', 'swish'),
+      (2, 2, 162.0, 'paid', '2026-01-17', 'SWISH-002', 'swish'),
+      (3, 3, 285.0, 'unpaid', NULL, NULL, NULL),
+      (4, 4, 190.0, 'unpaid', NULL, NULL, NULL),
+      (5, 5, 144.0, 'paid', '2026-01-20', 'SWISH-005', 'swish'),
+      (6, 6, 200.0, 'unpaid', NULL, NULL, NULL)
     `);
 
     console.log('Demo data inserted successfully');
+    console.log('  - 4 products');
+    console.log('  - 2 teams');
+    console.log('  - 4 geographic areas');
+    console.log('  - 10 customers');
+    console.log('  - 6 sample orders');
   });
 }
 

@@ -4,6 +4,10 @@ import axios from 'axios';
 import './App.css';
 import { AdminProvider } from './contexts/AdminContext';
 import ProductManagement from './components/admin/products/ProductManagement';
+import AreaManagement from './components/admin/areas/AreaManagement';
+import TeamManagement from './components/admin/teams/TeamManagement';
+import CustomerManagement from './components/admin/customers/CustomerManagement';
+import PaymentManagement from './components/admin/payments/PaymentManagement';
 
 // Use production URL when deployed, localhost for development
 const API_URL = process.env.NODE_ENV === 'production' 
@@ -223,17 +227,21 @@ function AdminDashboard() {
       </div>
 
       <div className="dashboard-grid">
-        <div className="dashboard-card" onClick={() => navigate('/admin/teams')}>
-          <h3>👥 Manage Teams</h3>
-          <p>Create and manage teams</p>
+        <div className="dashboard-card" onClick={() => navigate('/admin/products')}>
+          <h3>📦 Manage Products</h3>
+          <p>Add, edit, and price products</p>
         </div>
         <div className="dashboard-card" onClick={() => navigate('/admin/areas')}>
           <h3>🗺️ Geographic Areas</h3>
           <p>Define team territories</p>
         </div>
-        <div className="dashboard-card" onClick={() => navigate('/admin/products')}>
-          <h3>📋 Manage Products</h3>
-          <p>Add, edit, and price products</p>
+        <div className="dashboard-card" onClick={() => navigate('/admin/teams')}>
+          <h3>👥 Manage Teams</h3>
+          <p>Create and manage teams</p>
+        </div>
+        <div className="dashboard-card" onClick={() => navigate('/admin/customers')}>
+          <h3>👤 Manage Customers</h3>
+          <p>Add and organize customers</p>
         </div>
         <div className="dashboard-card" onClick={() => navigate('/admin/payments')}>
           <h3>💰 Payment Tracking</h3>
@@ -707,12 +715,16 @@ function App() {
           } />
           <Route path="/admin/teams" element={
             <ProtectedRoute adminOnly={true}>
-              <PlaceholderPage title="Manage Teams" />
+              <AdminProvider>
+                <TeamManagement />
+              </AdminProvider>
             </ProtectedRoute>
           } />
           <Route path="/admin/areas" element={
             <ProtectedRoute adminOnly={true}>
-              <PlaceholderPage title="Geographic Areas" />
+              <AdminProvider>
+                <AreaManagement />
+              </AdminProvider>
             </ProtectedRoute>
           } />
           <Route path="/admin/products" element={
@@ -722,9 +734,18 @@ function App() {
               </AdminProvider>
             </ProtectedRoute>
           } />
+          <Route path="/admin/customers" element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminProvider>
+                <CustomerManagement />
+              </AdminProvider>
+            </ProtectedRoute>
+          } />
           <Route path="/admin/payments" element={
             <ProtectedRoute adminOnly={true}>
-              <PlaceholderPage title="Payment Tracking" />
+              <AdminProvider>
+                <PaymentManagement />
+              </AdminProvider>
             </ProtectedRoute>
           } />
         </Routes>
