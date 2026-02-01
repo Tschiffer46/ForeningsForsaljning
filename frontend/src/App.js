@@ -8,6 +8,10 @@ import AreaManagement from './components/admin/areas/AreaManagement';
 import TeamManagement from './components/admin/teams/TeamManagement';
 import CustomerManagement from './components/admin/customers/CustomerManagement';
 import PaymentManagement from './components/admin/payments/PaymentManagement';
+import TeamCustomers from './components/team/TeamCustomers';
+import TeamOrders from './components/team/TeamOrders';
+import TeamProducts from './components/team/TeamProducts';
+import TeamDelivery from './components/team/TeamDelivery';
 
 // Use production URL when deployed, localhost for development
 const API_URL = process.env.NODE_ENV === 'production' 
@@ -695,22 +699,22 @@ function App() {
           } />
           <Route path="/customers" element={
             <ProtectedRoute>
-              <PlaceholderPage title="Customers" />
+              <TeamCustomers />
             </ProtectedRoute>
           } />
           <Route path="/orders" element={
             <ProtectedRoute>
-              <PlaceholderPage title="Orders" />
+              <TeamOrders />
             </ProtectedRoute>
           } />
           <Route path="/products" element={
             <ProtectedRoute>
-              <PlaceholderPage title="Products" />
+              <TeamProducts />
             </ProtectedRoute>
           } />
           <Route path="/delivery" element={
             <ProtectedRoute>
-              <PlaceholderPage title="Delivery" />
+              <TeamDelivery />
             </ProtectedRoute>
           } />
           <Route path="/admin/teams" element={
