@@ -816,9 +816,24 @@ const fs = require('fs');
 // Serve static React build files
 const frontendBuild = path.join(__dirname, '..', 'frontend', 'build');
 
+// Add debug endpoint to check environment
+app.get('/api/debug/environment', (req, res) => {
+  res.json({
+    nodeEnv: process.env.NODE_ENV,
+    port: PORT,
+    frontendBuildPath: frontendBuild,
+    frontendBuildExists: fs.existsSync(frontendBuild),
+    frontendBuildContents: fs.existsSync(frontendBuild) ? fs.readdirSync(frontendBuild) : [],
+    currentDirectory: __dirname,
+    parentDirectory: path.join(__dirname, '..'),
+    parentContents: fs.readdirSync(path.join(__dirname, '..')),
+  });
+});
+
 // Check if build directory exists
 if (fs.existsSync(frontendBuild)) {
-  console.log('Serving React frontend from:', frontendBuild);
+  console.log('✅ Serving React frontend from:', frontendBuild);
+  console.log('✅ Build contents:', fs.readdirSync(frontendBuild));
   app.use(express.static(frontendBuild));
   
   // Catch-all for React routing (specific routes for SPA)
@@ -844,11 +859,13 @@ if (fs.existsSync(frontendBuild)) {
     }
   });
 } else {
-  console.log('React build not found, serving landing page only');
+  console.log('❌ React build not found at:', frontendBuild);
+  console.log('❌ Directory listing of parent:', fs.readdirSync(path.join(__dirname, '..')));
+  console.log('❌ Serving landing page only');
   
   // Root route - Landing page embedded directly in code (only when no React build)
   app.get('/', (req, res) => {
-    console.log('ROOT endpoint hit - serving landing page');
+    console.log('ROOT endpoint hit - serving landing page (NO REACT BUILD)');
     res.send(`
       <!DOCTYPE html>
       <html lang="en">
