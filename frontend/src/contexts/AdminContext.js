@@ -42,11 +42,11 @@ export const AdminProvider = ({ children }) => {
   // Toast helper - defined first since other methods use it
   const showToast = useCallback((message, type = 'info') => {
     setToast({ message, type, id: Date.now() });
-  }, [showToast]);
+  }, []);
 
   const hideToast = useCallback(() => {
     setToast(null);
-  }, [showToast]);
+  }, []);
 
   // Products methods
   const loadProducts = useCallback(async () => {
