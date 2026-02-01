@@ -567,6 +567,219 @@ project-name/
 - **Error Recovery:** Clear error messages
 - **Performance:** Acceptable load times
 
+## Lessons Learned from FöreningsFörsäljning Project
+
+### Critical Issues Encountered and Solutions
+
+#### 1. Database Schema Mismatches
+
+**Problem:** Column names in database didn't match API expectations
+- Products table missing `description` column
+- Orders table had `total_price` instead of `total_amount`
+- Payments table had wrong column names
+
+**Solution:** 
+- Added migration code to add missing columns
+- Updated schema to match API expectations
+- Added comprehensive validation
+
+**Lesson:** Define complete schema upfront with all needed columns. Use consistent naming conventions across database and API.
+
+#### 2. Incomplete Component Implementation
+
+**Problem:** Routes pointed to `PlaceholderPage` instead of actual components
+- Team dashboard showed "Coming soon" messages
+- Users couldn't access features even though backend was ready
+
+**Solution:**
+- Created complete team dashboard components
+- Implemented TeamCustomers, TeamOrders, TeamProducts, TeamDelivery
+- Updated App.js routing
+
+**Lesson:** Always implement complete features end-to-end. Don't leave placeholders in production code. Test user workflows thoroughly.
+
+#### 3. Railway Health Check Failures
+
+**Problem:** Server started but health checks failed
+- Database initialization was asynchronous
+- Server listened before database was ready
+- Health check hit before initialization complete
+
+**Solution:**
+- Implemented `waitForReady()` pattern with EventEmitter
+- Server waits for database before listening
+- Guaranteed startup sequence
+
+**Lesson:** For cloud deployments, ensure proper startup synchronization. Always wait for async initialization before accepting connections.
+
+#### 4. Authentication Header Requirements
+
+**Problem:** API endpoints returned 403/401 errors
+- Missing `x-club-id` header
+- Missing `x-user-role` header
+- Token alone wasn't sufficient
+
+**Solution:**
+- Updated axios client to include all required headers
+- Set headers on login
+- Consistent header usage across all requests
+
+**Lesson:** Document all required headers for API endpoints. Include them in authentication setup. Test with actual HTTP calls, not just code review.
+
+#### 5. Build Configuration Issues
+
+**Problem:** Frontend build failed on Railway
+- ESLint errors treated as build failures
+- React Hook dependency issues
+- Peer dependency conflicts
+
+**Solution:**
+- Fixed useCallback dependency arrays
+- Used `--legacy-peer-deps` for npm install
+- Proper cleanup of build warnings
+
+**Lesson:** Test production builds locally before deploying. Handle peer dependency conflicts early. Fix all ESLint warnings before production.
+
+### Best Practices Validated
+
+#### ✅ What Worked Well
+
+1. **Component Architecture**
+   - Separate admin and team components
+   - Shared components for reusable UI
+   - Context API for state management
+
+2. **API Design**
+   - RESTful endpoints
+   - Consistent error responses
+   - Clear endpoint naming
+
+3. **Demo Data**
+   - Comprehensive sample data
+   - Realistic scenarios
+   - Easy to test workflows
+
+4. **Incremental Development**
+   - Built one phase at a time
+   - Tested each phase before moving on
+   - Clear milestones
+
+5. **Documentation**
+   - Archived historical docs
+   - Maintained current reference docs
+   - Clear API documentation
+
+#### ❌ What to Avoid
+
+1. **Placeholder Components**
+   - Don't ship with "Coming Soon" messages
+   - Complete features end-to-end
+   - Test actual user workflows
+
+2. **Schema Assumptions**
+   - Don't assume column names
+   - Verify database matches API
+   - Add migration code
+
+3. **Async Initialization**
+   - Don't start server before dependencies ready
+   - Wait for database initialization
+   - Use proper synchronization patterns
+
+4. **Missing Headers**
+   - Don't forget authentication headers
+   - Test with actual HTTP requests
+   - Document all requirements
+
+5. **Build Pipeline**
+   - Don't ignore ESLint warnings
+   - Test production builds locally
+   - Handle dependency conflicts
+
+### Development Process Improvements
+
+#### What Should Be Done Differently
+
+1. **Start with Complete Schema**
+   - Define all tables and columns upfront
+   - Match column names to API expectations
+   - Include migration strategy from day 1
+
+2. **Test End-to-End Early**
+   - Don't wait for "feature complete"
+   - Test actual user workflows
+   - Verify data persists correctly
+
+3. **Production Testing**
+   - Deploy early and often
+   - Test in production-like environment
+   - Verify health checks work
+
+4. **Component Planning**
+   - Plan all UI components before coding
+   - Don't use placeholders
+   - Complete one feature at a time
+
+5. **Documentation as You Go**
+   - Update docs with each change
+   - Keep main docs current
+   - Archive historical/process docs
+
+### Recommended Development Order
+
+Based on lessons learned, ideal sequence would be:
+
+1. **Database Schema (Day 1 Morning)**
+   - Complete schema with all columns
+   - Sample data generation
+   - Migration strategy
+   - Verification queries
+
+2. **Backend API (Day 1 Afternoon)**
+   - All CRUD endpoints
+   - Authentication with all headers
+   - Error handling
+   - Health check endpoint
+
+3. **Infrastructure Components (Day 2 Morning)**
+   - Shared UI components
+   - Context for state management
+   - API client utilities
+   - Validation helpers
+
+4. **Admin Features (Day 2-3)**
+   - One complete feature at a time
+   - Test each before moving on
+   - Verify data persistence
+
+5. **Team Features (Day 4)**
+   - Complete all team components
+   - Test workflows end-to-end
+   - Verify integration
+
+6. **Production Deployment (Day 5)**
+   - Deploy to Railway
+   - Test health checks
+   - Verify all features work
+   - Final documentation
+
+### Testing Checklist
+
+Before considering any feature "done":
+
+- [ ] Backend endpoint works (tested with curl/Postman)
+- [ ] Frontend component renders without errors
+- [ ] Can create new record via UI
+- [ ] Can edit existing record via UI
+- [ ] Can delete record via UI
+- [ ] Data persists across page refreshes
+- [ ] All required fields validated
+- [ ] Error messages display correctly
+- [ ] Loading states work
+- [ ] Success notifications appear
+- [ ] Works on mobile screen size
+- [ ] Documentation updated
+
 ## Conclusion
 
 This ideal plan represents a streamlined, professional approach to building a multi-tenant application. Key principles:
