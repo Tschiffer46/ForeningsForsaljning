@@ -6,7 +6,7 @@ const NavBar = ({ title, dashboardPath = '/dashboard', userName, onLogout }) => 
 
   return (
     <nav style={{
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
       color: 'white',
       padding: '1rem 2rem',
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
@@ -85,7 +85,7 @@ const NavBar = ({ title, dashboardPath = '/dashboard', userName, onLogout }) => 
               background: 'rgba(255, 255, 255, 0.9)',
               border: 'none',
               borderRadius: '8px',
-              color: '#667eea',
+              color: '#10b981',
               fontSize: '0.95rem',
               fontWeight: '600',
               cursor: 'pointer',

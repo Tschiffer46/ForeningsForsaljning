@@ -18,7 +18,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   padding: 20px;
 }
 
@@ -52,9 +52,9 @@ body {
 .user-type-selector button {
   flex: 1;
   padding: 12px;
-  border: 2px solid #667eea;
+  border: 2px solid #10b981;
   background: white;
-  color: #667eea;
+  color: #10b981;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
@@ -62,7 +62,7 @@ body {
 }
 
 .user-type-selector button.active {
-  background: #667eea;
+  background: #10b981;
   color: white;
 }
 
@@ -87,7 +87,7 @@ body {
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #10b981;
 }
 
 .error {
@@ -102,7 +102,7 @@ body {
 .btn-primary {
   width: 100%;
   padding: 12px;
-  background: #667eea;
+  background: #10b981;
   color: white;
   border: none;
   border-radius: 5px;
@@ -112,7 +112,7 @@ body {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #5568d3;
+  background: #059669;
 }
 
 .btn-primary:disabled {
@@ -146,7 +146,7 @@ body {
 }
 
 .public-links a {
-  color: #667eea;
+  color: #10b981;
   text-decoration: none;
   font-size: 14px;
 }
@@ -168,7 +168,7 @@ body {
 }
 
 .navbar {
-  background: #667eea;
+  background: #10b981;
   color: white;
   padding: 20px 30px;
   display: flex;
@@ -183,7 +183,7 @@ body {
 
 .navbar button {
   background: white;
-  color: #667eea;
+  color: #10b981;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
@@ -287,7 +287,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   padding: 20px;
 }
 
@@ -339,8 +339,8 @@ body {
 }
 
 .progress-step.active {
-  border-color: #667eea;
-  background: #667eea;
+  border-color: #10b981;
+  background: #10b981;
   color: white;
 }
 
@@ -366,7 +366,7 @@ body {
 .form-section input:focus,
 .form-section select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #10b981;
 }
 
 .button-group {
@@ -410,7 +410,7 @@ body {
 .price {
   font-size: 20px;
   font-weight: bold;
-  color: #667eea;
+  color: #10b981;
 }
 
 .price-note {
@@ -512,7 +512,7 @@ body {
 .cart-total {
   margin-top: 15px;
   padding-top: 15px;
-  border-top: 2px solid #667eea;
+  border-top: 2px solid #10b981;
   text-align: right;
   font-size: 18px;
   color: #333;
@@ -524,7 +524,7 @@ body {
 }
 
 .payment-summary h2 {
-  color: #667eea;
+  color: #10b981;
   margin-bottom: 30px;
 }
 
