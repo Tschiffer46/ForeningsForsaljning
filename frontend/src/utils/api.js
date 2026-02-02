@@ -39,6 +39,7 @@ const api = {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        'x-club-id': '1', // Multi-tenant club ID
         ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
