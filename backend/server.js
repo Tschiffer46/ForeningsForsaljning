@@ -642,8 +642,8 @@ app.get('/api/orders/:id', async (req, res) => {
 app.put('/api/payments/:id/mark-paid', async (req, res) => {
   try {
     const role = req.headers['x-user-role'];
-    if (role !== 'admin' && role !== 'super_admin') {
-      return res.status(403).json({ error: 'Admin access required' });
+    if (role !== 'admin' && role !== 'super_admin' && role !== 'team') {
+      return res.status(403).json({ error: 'Authentication required' });
     }
     
     const { payment_reference } = req.body;
