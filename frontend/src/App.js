@@ -39,8 +39,8 @@ function AuthProvider({ children }) {
       setUser(JSON.parse(storedUser));
       setRole(storedRole);
       setToken(storedToken);
-      setClubId(storedClubId);
-      setClubName(storedClubName);
+      if (storedClubId) setClubId(storedClubId);
+      if (storedClubName) setClubName(storedClubName);
       axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
       axios.defaults.headers.common['x-user-role'] = storedRole;
       if (storedClubId) {
@@ -58,8 +58,16 @@ function AuthProvider({ children }) {
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('role', userRole);
     localStorage.setItem('token', authToken);
-    if (userClubId) localStorage.setItem('clubId', userClubId);
-    if (userClubName) localStorage.setItem('clubName', userClubName);
+    if (userClubId) {
+      localStorage.setItem('clubId', userClubId);
+    } else {
+      localStorage.removeItem('clubId');
+    }
+    if (userClubName) {
+      localStorage.setItem('clubName', userClubName);
+    } else {
+      localStorage.removeItem('clubName');
+    }
     axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
     axios.defaults.headers.common['x-user-role'] = userRole;
     if (userClubId) {
