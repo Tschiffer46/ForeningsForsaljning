@@ -33,9 +33,10 @@ function AuthProvider({ children }) {
     const storedUser = localStorage.getItem('user');
     const storedRole = localStorage.getItem('role');
     const storedToken = localStorage.getItem('token');
-    const storedClubId = localStorage.getItem('clubId');
-    const storedClubName = localStorage.getItem('clubName');
+    
     if (storedUser && storedRole && storedToken) {
+      const storedClubId = localStorage.getItem('clubId');
+      const storedClubName = localStorage.getItem('clubName');
       setUser(JSON.parse(storedUser));
       setRole(storedRole);
       setToken(storedToken);
@@ -46,6 +47,10 @@ function AuthProvider({ children }) {
       if (storedClubId) {
         axios.defaults.headers.common['x-club-id'] = storedClubId;
       }
+    } else {
+      // Clean up any stale club data if authentication is missing
+      localStorage.removeItem('clubId');
+      localStorage.removeItem('clubName');
     }
   }, []);
 
