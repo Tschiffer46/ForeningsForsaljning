@@ -1,0 +1,12 @@
+# Railway should NOT ignore these during deployment
+# (opposite of .gitignore - we need build artifacts in Railway)
+
+# Only ignore these on Railway:
+.git
+.github
+docs-archive
+*.md
+!README.md
+*.log
+.env.local
+.DS_Store

@@ -1,0 +1,30 @@
+{
+  "name": "foreningsforsaljning",
+  "version": "1.0.0",
+  "description": "Sales organization app for managing teams, customers, orders, and delivery",
+  "main": "backend/server.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "frontend": "cd frontend && npm start",
+    "install-frontend": "cd frontend && npm install --legacy-peer-deps",
+    "build-frontend": "cd frontend && CI=false npm run build",
+    "build": "npm run install-frontend && npm run build-frontend",
+    "railway-build": "echo '=== Starting Railway Build ===' && npm run install-frontend && echo '=== Frontend dependencies installed ===' && npm run build-frontend && echo '=== Frontend build complete ===' && ls -la frontend/build || echo '❌ Build directory not created'",
+    "heroku-postbuild": "npm run build",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": ["sales", "teams", "orders", "delivery"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "sqlite3": "^5.1.7"
+  }
+}
