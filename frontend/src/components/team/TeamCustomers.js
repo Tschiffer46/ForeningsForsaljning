@@ -41,8 +41,14 @@ function TeamCustomers() {
   const loadCustomers = async () => {
     try {
       const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user'));
+      const clubId = user?.club_id;
+      
       const response = await axios.get(`${API_URL}/api/customers`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'x-club-id': clubId
+        }
       });
       setCustomers(response.data);
     } catch (error) {
