@@ -13,7 +13,7 @@ function TeamCustomers() {
   const [newCustomer, setNewCustomer] = useState({
     customer_number: 'CUST' + Date.now(),
     name: '',
-    phone: '',
+    phone_number: '',
     email: '',
     address: '',
     postal_address: ''
@@ -55,20 +55,31 @@ function TeamCustomers() {
 
   const handleAddCustomer = async (e) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!newCustomer.name || !newCustomer.address || !newCustomer.postal_address || !newCustomer.phone_number) {
+      alert('Please fill in all required fields: Name, Address, Postal Address, and Phone Number');
+      return;
+    }
+    
     try {
       const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user'));
+      const clubId = user?.club_id;
+      
       await axios.post(`${API_URL}/api/customers`, newCustomer, {
         headers: { 
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-club-id': clubId
         }
       });
-      alert('Customer added successfully!');
+      alert('✅ Customer added successfully!');
       setShowAddForm(false);
       setNewCustomer({
         customer_number: 'CUST' + Date.now(),
         name: '',
-        phone: '',
+        phone_number: '',
         email: '',
         address: '',
         postal_address: ''
@@ -156,13 +167,14 @@ function TeamCustomers() {
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                  Phone
+                  Phone Number *
                 </label>
                 <input
                   type="tel"
-                  value={newCustomer.phone}
-                  onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
+                  value={newCustomer.phone_number}
+                  onChange={(e) => setNewCustomer({ ...newCustomer, phone_number: e.target.value })}
                   style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  required
                 />
               </div>
               <div>
@@ -178,24 +190,26 @@ function TeamCustomers() {
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                  Address
+                  Address *
                 </label>
                 <input
                   type="text"
                   value={newCustomer.address}
                   onChange={(e) => setNewCustomer({ ...newCustomer, address: e.target.value })}
                   style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  required
                 />
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                  Postal Address
+                  Postal Address *
                 </label>
                 <input
                   type="text"
                   value={newCustomer.postal_address}
                   onChange={(e) => setNewCustomer({ ...newCustomer, postal_address: e.target.value })}
                   style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  required
                 />
               </div>
             </div>

@@ -28,6 +28,7 @@ function TeamOrders() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState(null);
   const [newOrder, setNewOrder] = useState({
     customer_id: '',
     quarter: 'Q1',
@@ -42,15 +43,27 @@ function TeamOrders() {
   const loadData = async () => {
     try {
       const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user'));
+      const clubId = user?.club_id;
+      
       const [ordersRes, customersRes, productsRes] = await Promise.all([
         axios.get(`${API_URL}/api/orders`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'x-club-id': clubId
+          }
         }),
         axios.get(`${API_URL}/api/customers`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'x-club-id': clubId
+          }
         }),
         axios.get(`${API_URL}/api/products`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'x-club-id': clubId
+          }
         })
       ]);
       setOrders(ordersRes.data);
@@ -89,16 +102,26 @@ function TeamOrders() {
     }
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${API_URL}/api/orders`, newOrder, {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const clubId = user?.club_id;
+      
+      const response = await axios.post(`${API_URL}/api/orders`, newOrder, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-club-id': clubId
         }
       });
-      alert('Order created successfully!');
+      
+      const orderId = response.data.id;
+      setCreatedOrderId(orderId);
+      alert('✅ Order created successfully!');
       setShowCreateForm(false);
       setNewOrder({ customer_id: '', quarter: 'Q1', year: 2026, items: [] });
       loadData();
+      
+      // Navigate to payment page
+      navigate(`/orders/${orderId}/payment`);
     } catch (error) {
       console.error('Error creating order:', error);
       alert('Failed to create order: ' + (error.response?.data?.error || error.message));
@@ -286,12 +309,13 @@ function TeamOrders() {
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Date</th>
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Amount</th>
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Status</th>
+              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {orders.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan="7" style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>
                   No orders found. Create your first order to get started!
                 </td>
               </tr>
@@ -313,6 +337,22 @@ function TeamOrders() {
                     }}>
                       {order.status || 'pending'}
                     </span>
+                  </td>
+                  <td style={{ padding: '12px' }}>
+                    <button
+                      onClick={() => navigate(`/orders/${order.id}/payment`)}
+                      style={{
+                        padding: '6px 12px',
+                        backgroundColor: '#6366f1',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}
+                    >
+                      💳 Pay
+                    </button>
                   </td>
                 </tr>
               ))

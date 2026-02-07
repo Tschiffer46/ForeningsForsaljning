@@ -12,6 +12,7 @@ import TeamCustomers from './components/team/TeamCustomers';
 import TeamOrders from './components/team/TeamOrders';
 import TeamProducts from './components/team/TeamProducts';
 import TeamDelivery from './components/team/TeamDelivery';
+import TeamSwishPayment from './components/team/TeamSwishPayment';
 
 // Use production URL when deployed, localhost for development
 const API_URL = process.env.NODE_ENV === 'production' 
@@ -695,6 +696,11 @@ function App() {
           <Route path="/delivery" element={
             <ProtectedRoute>
               <TeamDelivery />
+            </ProtectedRoute>
+          } />
+          <Route path="/orders/:orderId/payment" element={
+            <ProtectedRoute>
+              <TeamSwishPayment />
             </ProtectedRoute>
           } />
           <Route path="/admin/teams" element={
