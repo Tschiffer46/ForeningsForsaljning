@@ -40,8 +40,8 @@ function AuthProvider({ children }) {
       setUser(JSON.parse(storedUser));
       setRole(storedRole);
       setToken(storedToken);
-      if (storedClubId) setClubId(storedClubId);
-      if (storedClubName) setClubName(storedClubName);
+      setClubId(storedClubId || null);
+      setClubName(storedClubName || null);
       axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
       axios.defaults.headers.common['x-user-role'] = storedRole;
       if (storedClubId) {
@@ -58,8 +58,8 @@ function AuthProvider({ children }) {
     setUser(userData);
     setRole(userRole);
     setToken(authToken);
-    setClubId(userClubId);
-    setClubName(userClubName);
+    setClubId(userClubId || null);
+    setClubName(userClubName || null);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('role', userRole);
     localStorage.setItem('token', authToken);
