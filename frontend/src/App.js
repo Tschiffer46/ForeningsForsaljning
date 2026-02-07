@@ -40,11 +40,11 @@ function AuthProvider({ children }) {
       setUser(JSON.parse(storedUser));
       setRole(storedRole);
       setToken(storedToken);
-      setClubId(storedClubId || null);
-      setClubName(storedClubName || null);
+      setClubId(storedClubId && storedClubId !== 'null' ? storedClubId : null);
+      setClubName(storedClubName && storedClubName !== 'null' ? storedClubName : null);
       axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
       axios.defaults.headers.common['x-user-role'] = storedRole;
-      if (storedClubId) {
+      if (storedClubId && storedClubId !== 'null') {
         axios.defaults.headers.common['x-club-id'] = storedClubId;
       }
     } else {
