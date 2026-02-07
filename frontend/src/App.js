@@ -26,44 +26,65 @@ function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [token, setToken] = useState(null);
+  const [clubId, setClubId] = useState(null);
+  const [clubName, setClubName] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const storedRole = localStorage.getItem('role');
     const storedToken = localStorage.getItem('token');
+    const storedClubId = localStorage.getItem('clubId');
+    const storedClubName = localStorage.getItem('clubName');
     if (storedUser && storedRole && storedToken) {
       setUser(JSON.parse(storedUser));
       setRole(storedRole);
       setToken(storedToken);
+      setClubId(storedClubId);
+      setClubName(storedClubName);
       axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
       axios.defaults.headers.common['x-user-role'] = storedRole;
+      if (storedClubId) {
+        axios.defaults.headers.common['x-club-id'] = storedClubId;
+      }
     }
   }, []);
 
-  const login = (userData, userRole, authToken) => {
+  const login = (userData, userRole, authToken, userClubId, userClubName) => {
     setUser(userData);
     setRole(userRole);
     setToken(authToken);
+    setClubId(userClubId);
+    setClubName(userClubName);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('role', userRole);
     localStorage.setItem('token', authToken);
+    if (userClubId) localStorage.setItem('clubId', userClubId);
+    if (userClubName) localStorage.setItem('clubName', userClubName);
     axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
     axios.defaults.headers.common['x-user-role'] = userRole;
+    if (userClubId) {
+      axios.defaults.headers.common['x-club-id'] = userClubId;
+    }
   };
 
   const logout = () => {
     setUser(null);
     setRole(null);
     setToken(null);
+    setClubId(null);
+    setClubName(null);
     localStorage.removeItem('user');
     localStorage.removeItem('role');
     localStorage.removeItem('token');
+    localStorage.removeItem('clubId');
+    localStorage.removeItem('clubName');
     delete axios.defaults.headers.common['Authorization'];
     delete axios.defaults.headers.common['x-user-role'];
+    delete axios.defaults.headers.common['x-club-id'];
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, token, login, logout }}>
+    <AuthContext.Provider value={{ user, role, token, clubId, clubName, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -87,7 +108,7 @@ function Login() {
         password,
         userType
       });
-      auth.login(response.data.user, response.data.role, response.data.token);
+      auth.login(response.data.user, response.data.role, response.data.token, response.data.club_id, response.data.club_name);
       navigate(response.data.role === 'admin' ? '/admin' : '/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');
